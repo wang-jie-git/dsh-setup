@@ -1,0 +1,54 @@
+# dsh 核心插件配置（2026-09-06 重建）
+# 仅安装：dsh-memory-ai 记忆插件（深度集成 + 管理页面 + MCP）
+
+# 深度集成插件（从 GitHub Packages 加载）
+- insert:
+    - id: '@wang-jie-git/dsh-memory-ai'
+      name: '@wang-jie-git/dsh-memory-ai'
+# 管理页面
+- insert:
+    - id: dsh-memory-manager
+      name: './plugins/dsh-memory-manager/src/index.js'
+      config:
+        codegraphDir: '/Users/mac/.local/share/ai-memory'
+# AI Memory MCP
+- insert:
+    - id: mcp-ai-memory
+      name: '@deepseek-ai/dsh-mcp-client'
+      config:
+        serverName: ai-memory
+        transport: stdio
+        command: node
+        args: [ '/Users/mac/Desktop/AI-memory/dist/ai-memory-mcp.mjs', '--codegraph-dir', '/Users/mac/.local/share/ai-memory' ]
+        toolCallTimeoutMs: 30000
+# 免费视觉插件（平替 vision-toolkit，2026-09-06）
+- insert:
+    - id: free-vision
+      name: 'dsh-free-vision'
+# 网页搜索（wigolo 本地搜索，2026-09-06 恢复；2026-09-07 排除"贴图报错"嫌疑，已证明与 wigolo 无关）
+- insert:
+    - id: dsh-web-search-wigolo
+      name: './plugins/dsh-web-search-wigolo/src/index.js'
+
+# 视觉路由（dsh-vision-router@2.1.2，2026-09-07 安装：图片自动走识别系统）
+- insert:
+    - id: vision-router
+      name: dsh-vision-router
+      config:
+        progressiveTools: false
+        routingMode: auto
+
+# 工作台插件（Aisland-SJL/dsh-worktable v0.3.3，侧边栏应用抽屉 + 可停靠分割工作区）
+- insert:
+    - id: dsh-worktable
+      name: dsh-worktable
+
+# 产物实时预览（nirvanaslash/dsh-artifact-preview，2026-09-07 安装：Codex 风格产物预览面板）
+- insert:
+    - id: artifact-preview
+      name: 'dsh-artifact-preview'
+
+# 画布实时预览（jiuyuechuwuhao/dsh-canvas-preview，2026-09-07 安装：网页实时预览 + PNG/JPG/SVG 导出）
+- insert:
+    - id: canvas-preview
+      name: dsh-canvas-preview

@@ -1,0 +1,31 @@
+{
+  "name": "@wang-jie-git/memory-orchestrator",
+  "version": "1.1.1",
+  "private": false,
+  "description": "混合查询编排器 — 向量粗召回 + 图精排序 + 融合打分",
+  "main": "build/memory-orchestrator/src/index.js",
+  "dependencies": {
+    "@wang-jie-git/memory-graph": "^1.1.0",
+    "@wang-jie-git/memory-vector": "^1.1.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0",
+    "vitest": "^1.6.0",
+    "@types/node": "^22.0.0"
+  },
+  "files": [
+    "build/"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wang-jie-git/AI-memory.git"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "build": "tsc"
+  }
+}

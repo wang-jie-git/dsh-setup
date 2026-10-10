@@ -1,0 +1,31 @@
+# dsh 核心插件配置（2026-09-06 重建）
+# 仅安装：dsh-memory-ai 记忆插件（深度集成 + 管理页面 + MCP）
+
+# 深度集成插件（从 GitHub Packages 加载）
+- insert:
+    - id: '@wang-jie-git/dsh-memory-ai'
+      name: '@wang-jie-git/dsh-memory-ai'
+# 管理页面
+- insert:
+    - id: dsh-memory-manager
+      name: './plugins/dsh-memory-manager/src/index.js'
+      config:
+        codegraphDir: '/Users/mac/.local/share/ai-memory'
+# AI Memory MCP
+- insert:
+    - id: mcp-ai-memory
+      name: '@deepseek-ai/dsh-mcp-client'
+      config:
+        serverName: ai-memory
+        transport: stdio
+        command: node
+        args: [ '/Users/mac/Desktop/AI-memory/dist/ai-memory-mcp.mjs', '--codegraph-dir', '/Users/mac/.local/share/ai-memory' ]
+        toolCallTimeoutMs: 30000
+# 免费视觉插件（平替 vision-toolkit，2026-09-06）
+- insert:
+    - id: free-vision
+      name: 'dsh-free-vision'
+# 网页搜索（wigolo 本地搜索，2026-09-06 恢复）
+- insert:
+    - id: dsh-web-search-wigolo
+      name: './plugins/dsh-web-search-wigolo/src/index.js'

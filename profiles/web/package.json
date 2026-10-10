@@ -1,0 +1,28 @@
+{
+  "name": "dsh-profile-web",
+  "private": true,
+  "dependencies": {
+    "@deepseek-ai/cordis": "^4.0.4",
+    "@local/diagnosis-wizard": "link:/Users/mac/Desktop/个人形象管理/bundles/diagnosis-wizard",
+    "@local/song-cao-design-wizard": "link:/Users/mac/Desktop/宋式美学智能体/bundles/song-cao-design-wizard",
+    "dsh-free-vision": "^1.0.8",
+    "dsh-worktable": "https://github.com/Aisland-SJL/dsh-worktable/releases/download/v0.4.0/dsh-worktable-0.4.0.tgz"
+  },
+  "dsh": {
+    "profile": {
+      "bundles": [
+        "@deepseek-ai/dsh-base",
+        "@deepseek-ai/dsh-web-app",
+        "dsh-free-vision",
+        "@local/song-cao-design-wizard",
+        "@deepseek-ai/dsh-experimental-inspector-profile"
+      ],
+      "patchReload": "live"
+    }
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "node-pty"
+    ]
+  }
+}

@@ -1,0 +1,24 @@
+# dsh 核心插件配置（2026-09-07 修复 duplicate loader entry 错误后重建）
+# 原则：bundles 里的包自带 cordis.patch.yml（自动应用），根配置只保留
+#      非 bundle 插件（本地路径 / 非 bundle 包），避免重复注册。
+
+# 管理页面（本地插件，非 bundle）
+- insert:
+    - id: dsh-memory-manager
+      name: './plugins/dsh-memory-manager/src/index.js'
+      config:
+        codegraphDir: '/Users/mac/.local/share/ai-memory'
+# AI Memory MCP（非 bundle 包）
+- insert:
+    - id: mcp-ai-memory
+      name: '@deepseek-ai/dsh-mcp-client'
+      config:
+        serverName: ai-memory
+        transport: stdio
+        command: node
+        args: [ '/Users/mac/Desktop/AI-memory/dist/ai-memory-mcp.mjs', '--codegraph-dir', '/Users/mac/.local/share/ai-memory' ]
+        toolCallTimeoutMs: 30000
+# 网页搜索（本地插件，非 bundle；2026-09-07 排除"贴图报错"嫌疑，已证明与 wigolo 无关）
+- insert:
+    - id: dsh-web-search-wigolo
+      name: './plugins/dsh-web-search-wigolo/src/index.js'

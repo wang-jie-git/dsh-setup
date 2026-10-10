@@ -1,0 +1,428 @@
+{
+  "results": [
+    {
+      "title": "DeepSeek | Into the Unknown",
+      "url": "https://www.deepseek.com/",
+      "snippet": "DeepSeek is an AI research company focused on building world-leading general artificial intelligence. We develop and open-source …",
+      "relevance_score": 1,
+      "evidence_score": {
+        "final": 1,
+        "components": {
+          "base_rrf": 0.03647540983606558,
+          "context_cosine": 0,
+          "domain_quality": 1,
+          "lexical_alignment": 0.3333333333333333,
+          "recency_boost": 1,
+          "engine_consensus": 1,
+          "rare_terms": 1
+        },
+        "explanation": "base=0.036, domain=1.00, lex=0.33, engines=1"
+      },
+      "cached": true,
+      "cached_at": "2026-08-18 13:00:30"
+    },
+    {
+      "title": "DeepSeek Platform",
+      "url": "https://platform.deepseek.com/",
+      "snippet": "Join DeepSeek API platform to access our AI models, developer resources and API documentation.",
+      "relevance_score": 0.9949256977165639,
+      "evidence_score": {
+        "final": 0.9949256977165639,
+        "components": {
+          "base_rrf": 0.036290322580645164,
+          "context_cosine": 0,
+          "domain_quality": 1,
+          "lexical_alignment": 0.3333333333333333,
+          "recency_boost": 1,
+          "engine_consensus": 1,
+          "rare_terms": 1
+        },
+        "explanation": "base=0.036, domain=1.00, lex=0.33, engines=1"
+      },
+      "fetch_failed": "timeout",
+      "content_from_snippet": true,
+      "cached": true,
+      "cached_at": "2026-08-18 13:00:30"
+    },
+    {
+      "title": "DeepSeek - Into the Unknown",
+      "url": "https://chat.deepseek.com/sign_in",
+      "snippet": "Chat with DeepSeek AI – your intelligent assistant for coding, content creation, file reading, and more.",
+      "relevance_score": 0.9900124843945067,
+      "evidence_score": {
+        "final": 0.9900124843945067,
+        "components": {
+          "base_rrf": 0.03611111111111111,
+          "context_cosine": 0,
+          "domain_quality": 1,
+          "lexical_alignment": 0.3333333333333333,
+          "recency_boost": 1,
+          "engine_consensus": 1,
+          "rare_terms": 1
+        },
+        "explanation": "base=0.036, domain=1.00, lex=0.33, engines=1"
+      },
+      "fetch_failed": "timeout",
+      "content_from_snippet": true,
+      "cached": true,
+      "cached_at": "2026-08-18 13:00:30"
+    },
+    {
+      "title": "DeepSeek | 网页版入口、V4 Pro正式版与免费API",
+      "url": "https://deepseek.day/zh-cn/",
+      "snippet": "DeepSeek 是什么 DeepSeek 是开源大语言模型，可用于对话、写代码和长文处理。 本站提供 DeepSeek 网页版入口，可免费体验 …",
+      "relevance_score": 0.985252808988764,
+      "evidence_score": {
+        "final": 0.985252808988764,
+        "components": {
+          "base_rrf": 0.0359375,
+          "context_cosine": 0,
+          "domain_quality": 1,
+          "lexical_alignment": 0.3333333333333333,
+          "recency_boost": 1,
+          "engine_consensus": 1,
+          "rare_terms": 1
+        },
+        "explanation": "base=0.036, domain=1.00, lex=0.33, engines=1"
+      },
+      "cached": true,
+      "cached_at": "2026-08-18 13:00:30"
+    },
+    {
+      "title": "DeepSeek - 中文AI聊天",
+      "url": "https://deepseek.net/zh",
+      "snippet": "什么是 DeepSeek DeepSeek 是一家创新的人工智能（AI）公司，致力于开发先进的 AI 技术和解决方案，以应对各行业的复杂挑战。 …",
+      "relevance_score": 0.980639585133967,
+      "evidence_score": {
+        "final": 0.980639585133967,
+        "components": {
+          "base_rrf": 0.03576923076923077,
+          "context_cosine": 0,
+          "domain_quality": 1,
+          "lexical_alignment": 0.3333333333333333,
+          "recency_boost": 1,
+          "engine_consensus": 1,
+          "rare_terms": 1
+        },
+        "explanation": "base=0.036, domain=1.00, lex=0.33, engines=1"
+      },
+      "fetch_failed": "timeout",
+      "content_from_snippet": true,
+      "cached": true,
+      "cached_at": "2026-08-18 13:00:30"
+    },
+    {
+      "title": "DeepSeek",
+      "url": "https://download.deepseek.com/",
+      "snippet": "Chat with DeepSeek AI – your intelligent assistant for coding, content creation, file reading, and more.",
+      "relevance_score": 0.9718262619486834,
+      "evidence_score": {
+        "final": 0.9718262619486834,
+        "components": {
+          "base_rrf": 0.03544776119402985,
+          "context_cosine": 0,
+          "domain_quality": 1,
+          "lexical_alignment": 0.3333333333333333,
+          "recency_boost": 1,
+          "engine_consensus": 1,
+          "rare_terms": 1
+        },
+        "explanation": "base=0.035, domain=1.00, lex=0.33, engines=1"
+      },
+      "fetch_failed": "timeout",
+      "content_from_snippet": true,
+      "cached": true,
+      "cached_at": "2026-08-18 13:00:30"
+    },
+    {
+      "title": "DeepSeek - Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/DeepSeek",
+      "snippet": "Based in Hangzhou, Zhejiang, DeepSeek is owned and funded by High-Flyer, a Chinese hedge fund. DeepSeek was founded in July …",
+      "relevance_score": 0.548314606741573,
+      "evidence_score": {
+        "final": 0.548314606741573,
+        "components": {
+          "base_rrf": 0.02,
+          "context_cosine": 0,
+          "domain_quality": 1,
+          "lexical_alignment": 0.3333333333333333,
+          "recency_boost": 1,
+          "engine_consensus": 1,
+          "rare_terms": 1
+        },
+        "explanation": "base=0.020, domain=1.00, lex=0.33, engines=1"
+      },
+      "fetch_failed": "timeout",
+      "content_from_snippet": true,
+      "cached": true,
+      "cached_at": "2026-08-18 13:00:30"
+    },
+    {
+      "title": "Trying the New DeepSeek Harness | DeepakNess",
+      "url": "https://deepakness.com/blog/deepseek-harness/",
+      "snippet": "After building such great Pro and Flash models, DeepSeek has decided to step into the harness game as well. Their harness is based on this philosophy of \"everything is a plugin\", much like the . I have been using Pi with DeepSeek models for months now, so",
+      "relevance_score": 0.40449438202247195,
+      "evidence_score": {
+        "final": 0.40449438202247195,
+        "components": {
+          "base_rrf": 0.00819672131147541,
+          "context_cosine": 0,
+          "domain_quality": 1,
+          "lexical_alignment": 1,
+          "recency_boost": 1,
+          "engine_consensus": 1,
+          "rare_terms": 1.2
+        },
+        "explanation": "base=0.008, domain=1.00, lex=1.00, engines=1"
+      },
+      "cached": true,
+      "cached_at": "2026-08-18 13:00:30"
+    },
+    {
+      "title": "DeepSeek Harness: What I Found Before I Let It Run",
+      "url": "https://magnus919.com/2026/08/deepseek-harness-what-i-found-before-i-let-it-run/",
+      "snippet": "2026-08-15Magnus Hedemark (human)10 min read (2124 words) # # # is a coding-agent harness from DeepSeek. It’s labeled as a developer preview, and it puts DeepSeek’s models inside a serious, modular environment for working on code. That makes it interestin",
+      "relevance_score": 0.31154239019407554,
+      "freshness_signal": {
+        "published_date": "2026-08-01",
+        "inferred": true,
+        "confidence": "inferred-url"
+      },
+      "evidence_score": {
+        "final": 0.31154239019407554,
+        "components": {
+          "base_rrf": 0.007575757575757576,
+          "context_cosine": 0,
+          "domain_quality": 1,
+          "lexical_alignment": 0.6666666666666666,
+          "recency_boost": 1,
+          "engine_consensus": 1,
+          "rare_terms": 1.2
+        },
+        "explanation": "base=0.008, domain=1.00, lex=0.67, engines=1"
+      },
+      "fetch_failed": "timeout",
+      "content_from_snippet": true,
+      "cached": true,
+      "cached_at": "2026-08-18 13:00:30"
+    },
+    {
+      "title": "DeepSeek AI Guide: Chat, Models, API & Official Links",
+      "url": "https://chat-deep.ai/",
+      "snippet": "1 day ago · DeepSeek is an AI company and product ecosystem with an official chat assistant, mobile apps, an API platform, and …",
+      "relevance_score": 0.2907728975144705,
+      "published_date": "2026-08-17T13:00:22.016Z",
+      "freshness_signal": {
+        "published_date": "2026-08-17T13:00:22.016Z",
+        "inferred": false,
+        "confidence": "extracted"
+      },
+      "evidence_score": {
+        "final": 0.2907728975144705,
+        "components": {
+          "base_rrf": 0.010606060606060605,
+          "context_cosine": 0,
+          "domain_quality": 1,
+          "lexical_alignment": 0.3333333333333333,
+          "recency_boost": 1,
+          "engine_consensus": 1,
+          "rare_terms": 1
+        },
+        "explanation": "base=0.011, domain=1.00, lex=0.33, engines=1"
+      },
+      "cached": true,
+      "cached_at": "2026-08-18 13:00:30"
+    }
+  ],
+  "query": "deepseek harness plugin",
+  "engines_used": [
+    "bing",
+    "marginalia"
+  ],
+  "total_time_ms": 8,
+  "response_time_ms": 8,
+  "search_time_ms": 0,
+  "fetch_time_ms": 0,
+  "query_understanding": {
+    "intent": "general",
+    "entities": [
+      "deepseek"
+    ],
+    "date_hint": null,
+    "language": "en",
+    "is_brand_collision_prone": false,
+    "rewrites": [],
+    "compound_terms": []
+  },
+  "queries_executed": [
+    "deepseek harness plugin"
+  ],
+  "evidence": [
+    {
+      "title": "DeepSeek Platform",
+      "url": "https://platform.deepseek.com/",
+      "section_heading": null,
+      "excerpt": "Join DeepSeek API platform to access our AI models, developer resources and API documentation.",
+      "score": 0.9949256977165639,
+      "citation_id": "940c64625889",
+      "source_span": {
+        "start": 0,
+        "end": 94
+      }
+    },
+    {
+      "title": "DeepSeek - Into the Unknown",
+      "url": "https://chat.deepseek.com/sign_in",
+      "section_heading": null,
+      "excerpt": "Chat with DeepSeek AI – your intelligent assistant for coding, content creation, file reading, and more.",
+      "score": 0.9900124843945067,
+      "citation_id": "456712a8adf6",
+      "source_span": {
+        "start": 0,
+        "end": 104
+      }
+    },
+    {
+      "title": "DeepSeek | 网页版入口、V4 Pro正式版与免费API",
+      "url": "https://deepseek.day/zh-cn/",
+      "section_heading": "DeepSeek 网页版 · V4 Pro正式版 · 免费对话",
+      "excerpt": "DeepSeek 网页版可免费对话，也可接入 OpenAI 兼容 API 适用于智能对话、编程辅助、长文处理与 API 集成",
+      "score": 0.985252808988764,
+      "citation_id": "870a67a0fe94",
+      "source_span": {
+        "start": 36,
+        "end": 98
+      }
+    },
+    {
+      "title": "DeepSeek - 中文AI聊天",
+      "url": "https://deepseek.net/zh",
+      "section_heading": null,
+      "excerpt": "什么是 DeepSeek DeepSeek 是一家创新的人工智能（AI）公司，致力于开发先进的 AI 技术和解决方案，以应对各行业的复杂挑战。 …",
+      "score": 0.980639585133967,
+      "citation_id": "18f22e1d984e",
+      "source_span": {
+        "start": 0,
+        "end": 73
+      }
+    },
+    {
+      "title": "DeepSeek",
+      "url": "https://download.deepseek.com/",
+      "section_heading": null,
+      "excerpt": "Chat with DeepSeek AI – your intelligent assistant for coding, content creation, file reading, and more.",
+      "score": 0.9718262619486834,
+      "citation_id": "5129920c3ad4",
+      "source_span": {
+        "start": 0,
+        "end": 104
+      }
+    },
+    {
+      "title": "DeepSeek - Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/DeepSeek",
+      "section_heading": null,
+      "excerpt": "Based in Hangzhou, Zhejiang, DeepSeek is owned and funded by High-Flyer, a Chinese hedge fund. DeepSeek was founded in July …",
+      "score": 0.548314606741573,
+      "citation_id": "efe88dbf00de",
+      "source_span": {
+        "start": 0,
+        "end": 125
+      }
+    },
+    {
+      "title": "DeepSeek Harness: What I Found Before I Let It Run",
+      "url": "https://magnus919.com/2026/08/deepseek-harness-what-i-found-before-i-let-it-run/",
+      "section_heading": null,
+      "excerpt": "2026-08-15Magnus Hedemark (human)10 min read (2124 words) # # # is a coding-agent harness from DeepSeek. It’s labeled as a developer preview, and it puts DeepSeek’s models inside a serious, modular environment for working on code. That makes it interestin",
+      "score": 0.31154239019407554,
+      "citation_id": "213c0178c8bb",
+      "source_span": {
+        "start": 0,
+        "end": 255
+      }
+    },
+    {
+      "title": "DeepSeek AI Guide: Chat, Models, API & Official Links",
+      "url": "https://chat-deep.ai/",
+      "section_heading": "DeepSeek AI Guide: Chat, Models, API & Official Links",
+      "excerpt": "DeepSeek is an AI company and product ecosystem with an official chat assistant, mobile apps, an API platform, and open-weight model releases. As verified on August 14, 2026, the current API IDs are `deepseek-v4-flash` and `deepseek-v4-pro`. Flash serves `DeepSeek-V4-Flash-0731` in public beta. On August 13, DeepSeek rolled out `DeepSeek-V4-Pro-0813` as GA on App, Web, and API. Both current API models support the native Responses API.",
+      "score": 0.2907728975144705,
+      "citation_id": "1b9f792feb8f",
+      "source_span": {
+        "start": 58,
+        "end": 496
+      }
+    }
+  ],
+  "citations": [
+    {
+      "index": 1,
+      "url": "https://www.deepseek.com/",
+      "title": "DeepSeek | Into the Unknown",
+      "snippet": "DeepSeek is an AI research company focused on building world-leading general artificial intelligence. We develop and open-source …"
+    },
+    {
+      "index": 2,
+      "url": "https://platform.deepseek.com/",
+      "title": "DeepSeek Platform",
+      "snippet": "Join DeepSeek API platform to access our AI models, developer resources and API documentation.",
+      "citation_id": "940c64625889"
+    },
+    {
+      "index": 3,
+      "url": "https://chat.deepseek.com/sign_in",
+      "title": "DeepSeek - Into the Unknown",
+      "snippet": "Chat with DeepSeek AI – your intelligent assistant for coding, content creation, file reading, and more.",
+      "citation_id": "456712a8adf6"
+    },
+    {
+      "index": 4,
+      "url": "https://deepseek.day/zh-cn/",
+      "title": "DeepSeek | 网页版入口、V4 Pro正式版与免费API",
+      "snippet": "DeepSeek 是什么 DeepSeek 是开源大语言模型，可用于对话、写代码和长文处理。 本站提供 DeepSeek 网页版入口，可免费体验 …",
+      "citation_id": "870a67a0fe94"
+    },
+    {
+      "index": 5,
+      "url": "https://deepseek.net/zh",
+      "title": "DeepSeek - 中文AI聊天",
+      "snippet": "什么是 DeepSeek DeepSeek 是一家创新的人工智能（AI）公司，致力于开发先进的 AI 技术和解决方案，以应对各行业的复杂挑战。 …",
+      "citation_id": "18f22e1d984e"
+    },
+    {
+      "index": 6,
+      "url": "https://download.deepseek.com/",
+      "title": "DeepSeek",
+      "snippet": "Chat with DeepSeek AI – your intelligent assistant for coding, content creation, file reading, and more.",
+      "citation_id": "5129920c3ad4"
+    },
+    {
+      "index": 7,
+      "url": "https://en.wikipedia.org/wiki/DeepSeek",
+      "title": "DeepSeek - Wikipedia",
+      "snippet": "Based in Hangzhou, Zhejiang, DeepSeek is owned and funded by High-Flyer, a Chinese hedge fund. DeepSeek was founded in July …",
+      "citation_id": "efe88dbf00de"
+    },
+    {
+      "index": 8,
+      "url": "https://deepakness.com/blog/deepseek-harness/",
+      "title": "Trying the New DeepSeek Harness | DeepakNess",
+      "snippet": "After building such great Pro and Flash models, DeepSeek has decided to step into the harness game as well. Their harness is based on this philosophy of \"everything is a plugin\", much like the . I have been using Pi with DeepSeek models for months now, so"
+    },
+    {
+      "index": 9,
+      "url": "https://magnus919.com/2026/08/deepseek-harness-what-i-found-before-i-let-it-run/",
+      "title": "DeepSeek Harness: What I Found Before I Let It Run",
+      "snippet": "2026-08-15Magnus Hedemark (human)10 min read (2124 words) # # # is a coding-agent harness from DeepSeek. It’s labeled as a developer preview, and it puts DeepSeek’s models inside a serious, modular environment for working on code. That makes it interestin",
+      "citation_id": "213c0178c8bb"
+    },
+    {
+      "index": 10,
+      "url": "https://chat-deep.ai/",
+      "title": "DeepSeek AI Guide: Chat, Models, API & Official Links",
+      "snippet": "1 day ago · DeepSeek is an AI company and product ecosystem with an official chat assistant, mobile apps, an API platform, and …",
+      "citation_id": "1b9f792feb8f"
+    }
+  ]
+}

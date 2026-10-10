@@ -1,0 +1,138 @@
+---
+name: video-editor
+description: 视频剪辑统一编排 skill。整合本机全部视频能力（FFmpeg 简单剪辑/转码/滤镜/音频、Kdenlive + cli-anything-kdenlive 专业多轨剪辑、capcut-cli/cutcli 剪映草稿生成、edge-tts 配音、video_analyze/video_probe/video_ask 视频理解）为一条可执行的成片工作流。用户说"剪视频、剪辑、做短视频、配音、加字幕、配乐、调整色、拼接素材、裁剪片段、做封面、导出成片"或交付任何视频剪辑任务时触发。先做[GATE-0]分类：识别任务类型 → 查记忆（memory_query）→ 查笔记（Obsidian 视频剪辑功能清单）→ 选工具链 → 再输出。
+---
+
+# 视频剪辑统一编排 Skill（video-editor）
+
+整合本机全部视频能力为一套决策清晰、可执行的成片工作流。目标是：**接到需求 → 选对工具链 → 产出可交付成片（或可继续编辑的工程文件）**，不重复造轮子，不临时拼命令。
+
+## 核心原则
+
+1. **策划先行，批准后剪**：收到素材后先全量理解内容（probe + analyze 每个素材），再策划主题、制定剪辑方案，**呈现给用户请求修改/批准，批准后才执行剪辑**。见 `references/planning.md`。不盲剪。
+2. **先分析后动手**：开工前必须用 `video_probe`/`video_analyze` 了解素材（时长、分辨率、编码、内容结构），不要盲目处理。
+3. **按复杂度选工具链**：简单剪辑用 FFmpeg，专业多轨用 Kdenlive，需要用户继续手编用剪映草稿（capcut-cli），配音用 edge-tts，已有音频反向出字幕用 whisper（ASR），**无素材纯文案出片走 text-to-video 流水线**。绝不硬上重型工具。
+4. **不可逆操作前先备份**：原始素材只读不改，所有中间产物放 `build/`，最终成片放 `output/`，按版本命名。
+5. **出片前必过质检**：分辨率/时长/音频/字幕四项检查，见 `references/qc-checklist.md`。
+6. **每轮工作后同步记忆**：把关键成品路径、使用参数、踩坑记录写入 memory（视频剪辑相关 tag），下次直接复用。
+
+## 强制阅读顺序（接到剪辑需求后按序加载）
+
+### Step 0 — 必读 → [planning.md](references/planning.md)
+**策划流程（P0-P4）**：先理解素材 → 策划主题 → 出剪辑方案 → 用户批准 → 才执行。计划型任务（收到素材做一条成片）必须先走完 P0-P3 拿到批准，不得直接开剪。
+
+### Step 1 — 必读 → [project-layout.md](references/project-layout.md)
+项目目录结构（raw/converted/scripts/build/output），命名规范，版本管理。所有剪辑任务先建好目录骨架。
+
+### Step 2 — 按任务类型选读一个配方文件
+| 任务类型 | 读 |
+|---|---|
+| 简单剪辑：裁剪/拼接/转码/调色/滤镜/水印/GIF | [ffmpeg-recipes.md](references/ffmpeg-recipes.md) |
+| 专业剪辑：多轨/转场/关键帧/复杂时间轴 | [kdenlive-recipes.md](references/kdenlive-recipes.md) |
+| 生成剪映草稿：用户要在剪映里继续编辑 | [capcut-recipes.md](references/capcut-recipes.md) |
+| 配音/旁白/字幕/配乐 | [tts-subtitles.md](references/tts-subtitles.md) |
+| **已有音频/视频反向出字幕（ASR，whisper）** | [asr-subtitles.md](references/asr-subtitles.md) |
+| **无素材/仅文案直接成片（文案→配音→文字卡→拼接→出片）** | [text-to-video.md](references/text-to-video.md) |
+| 视频内容理解/找关键帧/时间定位 | 先看 `references/analysis.md`（引用 video_analyze/video_ask/video_probe） |
+
+### Step 3 — 出片前必读 → [qc-checklist.md](references/qc-checklist.md)
+交付检查清单：分辨率、码率、时长、音画同步、字幕、封面。
+
+---
+
+## 路由：先分类，再选工具链
+
+接到剪辑需求，先做[GATE-0]分类声明（内部完成）：
+
+1. **任务类型**：简单剪辑 / 专业剪辑 / 剪映草稿 / 配音字幕 / 视频分析 / 封面物料 / **文案直接成片（无素材）** / **ASR 反向字幕（已有音频→字幕）**
+2. **查记忆**：`memory_query "视频剪辑"` 看有无历史成品与踩坑记录
+3. **查笔记**：grep Obsidian `/Users/mac/Documents/ObsidianVault/2.项目/1.视频剪辑/1.视频剪辑功能清单.md`
+4. **选工具链**：
+   - 裁剪、拼接、转码、调色、滤镜、GIF、加水印 → FFmpeg（工具：`ffmpeg_cut`/`ffmpeg_concat`/`ffmpeg_encode`/`ffmpeg_gif`/`ffmpeg_subtitle`/`ffmpeg_extract` + bash 滤镜命令）
+   - 多轨、转场、精细时间轴 → `cli-anything-kdenlive`（有状态 JSON 项目 → MLT XML → 渲染）
+   - 用户要"在剪映里继续改" → capcut-cli / cutcli 生成草稿
+   - 配音/旁白 → `edge-tts`（含 SRT 字幕一步生成）
+   - **已有音频/视频要出字幕（ASR 反向）→ `whisper`**（本机已装，tiny/base/small 已缓存；中文小模型实测 0 错字，速度约 4.2× 音频时长；见 `references/asr-subtitles.md`）
+   - **无拍摄素材、仅文案 → 文案直接成片流水线**：edge-tts 配音+SRT → Pillow 逐句文字卡 → ffmpeg 切片 → xfade 拼接 → BGM（见 `references/text-to-video.md`）
+   - 理解视频内容 → `video_probe` → `video_analyze` → `video_ask`
+
+## AI 专家角色编排层（借鉴 Cutia Expert Roles，2026-08-29 集成）
+
+在 GATE-0 分类后，按任务阶段切换"专家角色"——每个角色有专属视角与检查清单；多阶段成片任务由导演(Director)自动编排。**复用同一套工具链**（ffmpeg/Kdenlive/whisper/edge-tts），不新增工具，只换思考与汇报方式。
+
+### 角色定义
+
+| 角色 | 专注 | 触发场景 |
+|---|---|---|
+| storytelling 叙事导演 | 主题、钩子、叙事线、情感弧线 | 无文案、需策划整片 |
+| editing 剪辑顾问 | 节奏、转场、镜头衔接、时间线结构 | 多素材组装、成片结构 |
+| audio 音频顾问 | 混音、字幕、配音、BGM、音画同步 | 配音/字幕/配乐/音效 |
+| design 设计顾问 | 视觉构图、色调、文字卡、封面 | 调色/封面/标题排版 |
+| general 通用助手 | 兜底，按需调用 | 简单明确指令 |
+
+### Director 标准编排（7 阶段，仅复杂成片任务走全流程）
+
+1. Pre-production（storytelling 出主题/钩子/叙事线）
+2. Setup（design 定画面基调）
+3. 素材理解（general：video_probe + video_analyze 全量理解）
+4. 时间线组装（editing：切点/顺序/转场/节奏）
+5. 文字与标题（design：字幕/文字卡/封面）
+6. 音频（audio：配音/BGM/音画同步）
+7. 终检（editing：qc-checklist 逐项过）
+
+### 应用规则
+
+- 阶段切换 = 输出 `[角色: xxx]` 声明 + 该角色专属检查项；**不改变**现有 GATE-0/策划/批准/执行流程
+- 单一指令（如"剪 0:10-0:20 加乐"）无需切角色，general 直接执行
+- 复杂成片任务按 7 阶段自动编排，每阶段向用户汇报一次进度
+
+---
+
+## 标准工作流（高层视图）
+
+```
+[GATE-0] 分类 + 查记忆 + 查笔记
+   ↓
+P0 素材全量理解（video_probe + video_analyze 每个素材，产出 media-manifest.md）
+   ↓
+P1 内容盘点与主题策划（提炼主题/钩子/叙事线，产出 brief.md）
+   ↓
+P2 制定详细剪辑方案（镜头表 shot-plan.json + 章节 + 配音/字幕/BGM 计划，产出 edit-plan.md）
+   ↓
+P3 呈现方案给用户 → 请求修改 → 批准（硬性门禁，未批准不执行）
+   ↓
+P4 批准后执行：
+   1. 建目录骨架（project-layout.md）
+   2. 按任务类型选配方（ffmpeg / kdenlive / capcut / edge-tts / whisper-ASR）
+   3. 生成片段 → 拼接 → 配音字幕 → 调色 → 导出
+   4. 质检（qc-checklist.md 逐项检查）
+   5. 交付（输出路径 + 参数 + 结果）
+   6. 写记忆（成品路径、方案、踩坑 → memory_write，tags 含"视频剪辑"）
+```
+
+> 明确单一指令（如"剪 0:10-0:20 加乐"）可跳过 P1-P2 直接从 P0 后执行；计划型成片任务必须走 P0-P3 批准流程。详见 references/planning.md。
+> **无素材纯文案出片**：文案驱动，走 `references/text-to-video.md`（edge-tts 配音+SRT → Pillow 逐句文字卡 → ffmpeg 切片 → xfade 拼接 → BGM → 成片），口播文案本身即方案，无需 P0-P3 素材策划，但配音音色/风格仍需用户确认。
+
+---
+
+## 环境事实（2026-08-29 验证）
+
+| 能力 | 状态 | 入口 |
+|---|---|---|
+| FFmpeg | ✅ 已装 | 工具 `ffmpeg_*` + bash |
+| Kdenlive | ✅ 已装 | `/Applications/kdenlive.app/Contents/MacOS/kdenlive` |
+| cli-anything-kdenlive | ✅ 已装 | `/Users/mac/.local/bin/cli-anything-kdenlive` |
+| edge-tts | ✅ 已装 | `/usr/local/bin/edge-tts` |
+| capcut-cli | ⚠️ 未装 | `npm install -g capcut-cli`（node v24 已就绪） |
+| cutcli | ⚠️ 未装 | `curl -s https://cutcli.com/cli \| bash` |
+
+**capcut-cli / cutcli 未安装时**：如任务需要剪映草稿，先安装；如用户当前剪辑不需要剪映草稿，走 FFmpeg/Kdenlive 即可，不要为了装而装。
+
+---
+
+# 输出要求
+
+- 每个任务交付时报告：**产物路径、使用的命令/参数、质检结果、下一步建议**
+- 若需要用户确认方向（如配音音色、字幕风格、色调），先给 2-3 个候选再执行
+- 产物一律放 `output/`，命名 `final_v1.mp4`、`final_v2.mp4` 等，不覆盖旧版本
+- 涉及用户文件时先 probe 再动，绝不盲目覆盖原始素材

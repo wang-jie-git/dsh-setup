@@ -1,0 +1,28 @@
+{
+  "name": "@wang-jie-git/memory-vector",
+  "version": "1.1.0",
+  "private": false,
+  "description": "\u8bed\u4e49\u5411\u91cf\u5f15\u64ce\u9002\u914d\u5c42 \u2014 VectorStore \u62bd\u8c61\u3001SQLite/sqlite-vec \u5b9e\u73b0\u3001Embedding \u6a21\u578b\u63a5\u5165",
+  "main": "build/index.js",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "build": "tsc"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "^5.4.0",
+    "vitest": "^1.6.0",
+    "@types/node": "^22.0.0"
+  },
+  "files": [
+    "build/"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wang-jie-git/AI-memory.git"
+  }
+}

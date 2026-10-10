@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 2,
+  "revision": 0,
+  "tasks": [],
+  "scheduler": {
+    "timeZone": "Asia/Shanghai",
+    "ledgerId": "78d707af-0e8e-4fa0-91e7-41251ac56968",
+    "lastTickAt": 1787220766652
+  },
+  "recentRequests": []
+}

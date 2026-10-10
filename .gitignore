@@ -1,0 +1,51 @@
+# macOS 系统文件
+.DS_Store
+
+# 运行时产物
+node_modules/
+cache/
+sessions/
+storages/
+logs/
+*.log
+
+# 自动生成的备份
+backup-*/
+skin-center/
+attachments/
+pet.json
+
+# 敏感信息
+.credentials.yaml
+.anonymous-user-id
+
+# 临时/锁定文件
+.dsh-vision-toolkit-update-*
+
+# Profile 自动生成文件
+profiles/web/cordis.yml
+profiles/web/node_modules/
+profiles/web/plugins/
+profiles/web/plugins.disabled-once-verified/
+profiles/web/zat-backup/
+profiles/web/*.bak
+profiles/web/package-lock.json.env
+# 本地配置（含明文 key/本地路径）
+memory-ai-config.json
+profiles/web/.npmrc
+# 敏感变体（备份/时间线 env）
+.credentials.yaml*
+memory-ai-config.json*
+dsh-timeline.env
+.env*
+# 备份目录（含历史配置/敏感）
+profiles/*.bak-*/
+profiles/*.bak*
+*.bak-*
+*.backup-*
+# 含 key 的本地配置（install.sh 生成模板）
+free-vision.json
+image-generation.json
+settings.yaml*
+skills/*/.env
+skills/baoyu-image-gen/.env*

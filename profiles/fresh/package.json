@@ -1,0 +1,17 @@
+{
+  "name": "dsh-profile-fresh",
+  "private": true,
+  "dependencies": {
+    "dsh-free-vision": "^1.0.8"
+  },
+  "dsh": {
+    "profile": {
+      "bundles": [
+        "@deepseek-ai/dsh-base",
+        "@deepseek-ai/dsh-web-app",
+        "dsh-free-vision"
+      ],
+      "patchReload": "live"
+    }
+  }
+}

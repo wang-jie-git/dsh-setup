@@ -1,0 +1,94 @@
+{
+  "timestamp": "2026-08-23T15:43:07.372Z",
+  "patchEntries": [
+    {
+      "id": "dsh-web-search-wigolo",
+      "name": "./plugins/dsh-web-search-wigolo/src/index.js"
+    },
+    {
+      "id": "healthcheck",
+      "name": "./plugins/dsh-healthcheck/src/index.js"
+    },
+    {
+      "id": "dsh-at-file",
+      "name": "./plugins/dsh-at-file/lib/index.js"
+    },
+    {
+      "id": "dsh-diagram-design",
+      "name": "./plugins/dsh-diagram-design/src/index.js"
+    },
+    {
+      "id": "preflight",
+      "name": "./plugins/dsh-plugin-preflight/src/index.js"
+    },
+    {
+      "id": "@wangjiezhong/dsh-memory-ai",
+      "name": "/Users/mac/Desktop/AI-memory/packages/dsh-plugin/build/dsh-plugin/src/index.js"
+    },
+    {
+      "id": "act-bridge",
+      "name": "./plugins/dsh-act-bridge/src/index.js"
+    },
+    {
+      "id": "dsh-nexus-browser-guide",
+      "name": "./plugins/dsh-nexus-browser-guide/src/index.js"
+    },
+    {
+      "id": "mcp-nexus-browser",
+      "name": "@deepseek-ai/dsh-mcp-client"
+    },
+    {
+      "id": "web",
+      "name": ""
+    }
+  ],
+  "plugins": [
+    {
+      "name": "demo-tool",
+      "entry": "src/index.js",
+      "mtime": 1787412808533.683
+    },
+    {
+      "name": "dsh-act-bridge",
+      "entry": "src/index.js",
+      "mtime": 1787413408751.7964
+    },
+    {
+      "name": "dsh-at-file",
+      "entry": "lib/index.js",
+      "mtime": 1787412943365.507
+    },
+    {
+      "name": "dsh-diagram-design",
+      "entry": "src/index.js",
+      "mtime": 1787413177310.303
+    },
+    {
+      "name": "dsh-healthcheck",
+      "entry": "src/index.js",
+      "mtime": 1787412887749.8687
+    },
+    {
+      "name": "dsh-memory-manager",
+      "entry": "src/index.js",
+      "mtime": 1787413250520.6707
+    },
+    {
+      "name": "dsh-nexus-browser-guide",
+      "entry": "src/index.js",
+      "mtime": 1787413408760.6724
+    },
+    {
+      "name": "dsh-plugin-preflight",
+      "entry": "src/index.js",
+      "mtime": 1787499776101.829
+    },
+    {
+      "name": "dsh-web-search-wigolo",
+      "entry": "src/index.js",
+      "mtime": 1787058265732.5417
+    }
+  ],
+  "corePackages": [],
+  "configValid": true
+}

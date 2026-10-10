@@ -1,0 +1,13 @@
+{
+  "name": "dsh-nexus-browser-guide",
+  "version": "0.1.0",
+  "description": "nexus-browser 使用引导 skill — 17 个 MCP 工具的选择决策树，让模型优先走确定性路由（web_task），必要时才开浏览器交互",
+  "type": "module",
+  "main": "src/index.js",
+  "dsh": {
+    "bundle": {
+      "patch": "cordis.patch.yml"
+    }
+  },
+  "license": "MIT"
+}

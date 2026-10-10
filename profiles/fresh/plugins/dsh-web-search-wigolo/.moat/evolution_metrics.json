@@ -1,0 +1,20 @@
+[
+  {
+    "id": "refactor_1787062997236",
+    "type": "refactor_success",
+    "value": 0.5,
+    "weight": 0.25,
+    "timestamp": 1787062997.2363899,
+    "context": {
+      "files_changed": 0,
+      "tests_passed": true,
+      "pain_score_before": 0.0,
+      "pain_score_after": 0.0,
+      "source": "moat_check",
+      "total_checks": 1,
+      "passed": 1,
+      "failed": 0
+    },
+    "is_positive": true
+  }
+]

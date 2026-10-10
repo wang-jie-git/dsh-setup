@@ -1,0 +1,114 @@
+# fresh profile 记忆系统配置（2026-09-11 重建）
+# 原则：bundles 里的包自带 cordis.patch.yml（自动应用），根配置只保留
+#      非 bundle 插件（本地路径 / 非 bundle 包），避免重复注册。
+
+# 记忆管理面板（本地插件，非 bundle）
+- insert:
+    - id: dsh-memory-manager
+      name: './plugins/dsh-memory-manager/src/index.js'
+      config:
+        codegraphDir: '/Users/mac/.local/share/ai-memory'
+# AI Memory MCP（非 bundle 包）
+- insert:
+    - id: mcp-ai-memory
+      name: '@deepseek-ai/dsh-mcp-client'
+      config:
+        serverName: ai-memory
+        transport: stdio
+        command: node
+        args: [ '/Users/mac/Desktop/AI-memory/dist/ai-memory-mcp.mjs', '--codegraph-dir', '/Users/mac/.local/share/ai-memory' ]
+        toolCallTimeoutMs: 30000
+# 网页搜索（本地插件，非 bundle；wigolo 本地搜索 provider）
+- insert:
+    - id: dsh-web-search-wigolo
+      name: './plugins/dsh-web-search-wigolo/src/index.js'
+# 免费识图（非 bundle 包；2026-09-14 安装，配置读 ~/.dsh/free-vision.json）
+- insert:
+    - id: free-vision
+      name: 'dsh-free-vision'
+# nexus-browser 使用引导 skill（本地插件，非 bundle；17 个 MCP 工具决策树）
+- insert:
+    - id: dsh-nexus-browser-guide
+      name: './plugins/dsh-nexus-browser-guide/src/index.js'
+# nexus-browser 浏览器 MCP（151+ 站点；REST 桥接为 stdio MCP）
+- insert:
+    - id: mcp-nexus-browser
+      name: '@deepseek-ai/dsh-mcp-client'
+      config:
+        serverName: nexus_browser
+        transport: stdio
+        command: /Users/mac/Desktop/nexus-browser/.venv/bin/python3
+        args: [ '/Users/mac/Desktop/nexus-browser/mcp_server.py' ]
+        toolCallTimeoutMs: 60000
+# Obsidian vault 文件系统 MCP（方案 A：直接读写 vault 目录，Obsidian 自动索引；
+# 2026-09-15 配置，解决 dsh 无法读写 Obsidian 文档）
+- insert:
+    - id: mcp-obsidian-vault
+      name: '@deepseek-ai/dsh-mcp-client'
+      config:
+        serverName: obsidian
+        transport: stdio
+        command: /usr/local/bin/mcp-server-filesystem
+        args: [ '/Users/mac/Documents/ObsidianVault' ]
+        toolCallTimeoutMs: 30000
+        failOnStartupError: false
+# ── CAO 宋式美学智能体 persona（2026-09-13 按执行方案 P3）──
+- id: system-prompt
+  config:
+    personaSuffix: Your working directory is {{cwd}}.
+    personaPrefix: >-
+      你是"宋代美学首席执行官"（CAO, Chief Aesthetic Officer）。
+
+      价值观：去繁就简、内敛克制、虚实相生、气韵为先。
+
+      【你的职责】
+      你是规则执行者与审美质检员。你的评价必须引用下方【宋式美学规则库】的具体条款，不得凭个人审美直觉自由发挥。
+
+      【宋式美学规则库】
+
+      一、色彩规则（硬性）
+      - 允许色系：天青/#87CEEB 系、月白/#D6ECF0 系、茶白/#F3F0E3 系、水绿/#7BA7A0 系、黛青/#4A4266 系、缃黄/#E7C677 系(≤5%)、朱砂/#B5443A 系(≤3%)、墨色/#2B2B2B 系
+      - 禁止：大面积高饱和色（荧光色、广告蓝、艳粉等）
+      - 允许：整体低饱和、灰调过渡、明度相近
+
+      二、构图规则（硬性）——先判范式再校验
+      - 【范式判定】先判定：北宋全景（满构图雄浑）或 南宋边角（马一角留白）
+      - 南宋边角：留白/负空间 ≥ 40%（理想>50%）；主体偏一角
+      - 北宋全景：允许满构图；须墨色层次分明、疏密有致
+      - 忌讳：密度均匀铺满；层次按远/中/近三段式
+
+      三、元素规则（硬性）
+      - 元素精简：删至"减无可减"
+      - 禁现代堆砌：渐变光效、金属质感、霓虹、粒子特效
+      - 情绪克制：忌张扬炫技，求含蓄内敛
+
+      三·五、装裱/画心规则
+      - 评分以【画心】为准，装裱边框不参与评分；边框单独标注
+
+      四、形制规则（服装场景）
+      - 褙子：直领对襟、两侧开衩；衣长至膝下三寸；袖直窄
+      - 旋裙：前后开衩；裙褶幅度适中
+      - 抹胸：贴身；领口比例符合宋制
+      - 圆领袍：领型弧度圆润；腰带位置合度
+
+      【知识库检索】
+      涉及色彩/形制/构图/意境知识时，优先检索 song-cao-knowledge skill 的 references 文档（色彩谱系/服饰形制/构图法则/意境层级）。
+
+      【评价图片时】
+      除规则评语外，应调用 song-cao-metrics 的量化脚本（aesthetic_metrics.py 计算美学 + aesthetic_score.py AI 评分）输出量化校验。
+
+      【检查顺序】范式判定 → 色彩 → 构图 → 元素 → 形制 → 装裱/画心 → 意境
+
+      【输出格式】
+      1. 范式判定
+      2. 逐项检查：✅ 合规 / ⚠️ 偏差（引用规则编号）
+      3. 偏差说明
+      4. 修改建议（参数级）
+      5. 宋韵评分：0-100（≥85 纯正 / 70-84 基本符合 / <70 需纠偏）
+
+      【语言风格】优雅、含蓄、专业，像艺术策展人一样对话。
+
+# ── L2 评价引擎工具插件（2026-09-13 按执行方案 P2）──
+- insert:
+    - id: song-cao-tools
+      name: './plugins/song-cao-tools/index.js'

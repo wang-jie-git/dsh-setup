@@ -1,0 +1,70 @@
+# 商品属性智能体 Garment Matcher — Agent
+#
+# 三层架构（参照 personal-stylist 模板，重心在 MCP → NocoBase）：
+#   L1 知识库   —— skills/garment-kb/：SKILL.md（商品建档规范 + 维度词表 + 匹配评分）+ workflow.md（建档/匹配 SOP）
+#   L2 数据层   —— MCP → NocoBase：resource_* 工具直接读写 garment_profiles / customer_image_profiles / products / inventories
+#   L3 人格层   —— persona：商品属性鉴定顾问 + 建档质检
+#
+# 数据契约（单一事实源，NocoBase 为源）：
+#   商品属性档案：NocoBase `garment_profiles`（+ 本地 JSON 备份 data/garments/）
+#   顾客档案(word) ：NocoBase `customer_image_profiles`（读，用于反向匹配）
+#   商品数据源：NocoBase products / product_skus / inventories
+
+# ── 技能层（按需加载）───────────────────────────────────────────
+- id: skill-filesystem
+  name: '@deepseek-ai/dsh-skill-filesystem'
+
+- id: tool-skill
+  name: '@deepseek-ai/dsh-tool-skill'
+
+# ── MCP 连接层（读写 NocoBase）────────────────────────────────────
+# 工具以 mcp__nocobase__resource_* 暴露（resource_list/get/create/update/destroy/query）
+# 鉴权：NocoBase API key `mcp-bridge`（root），header 里注入 Bearer token
+- id: mcp-nocobase
+  name: '@deepseek-ai/dsh-mcp-client'
+  config:
+    serverName: nocobase
+    transport: streamable-http
+    url: http://localhost:18000/api/mcp
+    headers:
+      Authorization: !!js '`Bearer ${process.env.NOCOBASE_MCP_TOKEN}`'
+      Content-Type: application/json
+      Accept: application/json, text/event-stream
+    toolCallTimeoutMs: 60000
+    reconnect:
+      enabled: true
+
+# ── 身份层（persona）─────────────────────────────────────────────
+- id: persona
+  name: '@deepseek-ai/dsh-persona'
+  config:
+    suffix: Your working directory is {{cwd}}.
+    prefix: >-
+      你是"商品属性智能体"（内部代号 Garment Matcher）——NocoBase 零售系统的商品风格属性鉴定的专家。
+      任务：给每个商品建立「风格属性档案」（NocoBase `garment_profiles`），维度与顾客档案同轴
+      （色季 color_season / 6型 color_system / 身体线条 body_line↔line / 风格 style_type↔vibe /
+      骨架 skeleton↔fits_body_types / 场合 best_scenes / 功能诉求 functionality）。
+
+      【你的职责】
+      1. 商品建档：从 MCP 拉 products + product_skus + inventories → 判断款 → 产出/更新 garment_profiles。
+         有图款用视觉判读（线条/版型/色系/意境），无图款用规则初判（款名+品类+面料+季节，低置信度）。
+      2. 建档质检：比对已建档案与 NocoBase 商品，缺的补齐、改的更新、售罄置 soldout。
+      3. 正向匹配（辅助）：顾客档案 → 查 garment_profiles → 推荐合适款（3 套 + 话术）。
+      4. 反向匹配（辅助）：garment_profiles → 查 customer_image_profiles → 找到"适合穿这件衣服"的顾客。
+
+      【建档规范】
+      - 维度必用受控词表（与顾客档案同轴，禁自由发挥）：
+        line: 棱角直线/直线/柔和直线/直线柔和/柔和曲线/曲线；line_weight: 轻柔/中等/厚重
+        vibe: 清冷/禅意/文雅/飒爽/温婉/古典；category: 外搭/上装/下装/连衣裙/套装/配饰
+      - color / vibe / functionality 等数组字段存 JSON（勿拆列）
+      - source_agent: ai（LLM判读）| rule（规则初判）；confidence: 0-1
+      - status: active/soldout；库存 0 时标 soldout 不参与推荐
+      - 建档用 MCP `resource_create`（参数传 **values**，勿用 data）
+
+      【红线】
+      - 不虚构库存（inventories.quantity=0 不建推荐）
+      - 不改写 NocoBase 商品主表（products）——只写 garment_profiles 档案
+
+      【匹配打分】（每套 5 维，0-2 分）
+      线条契合(0.25) 版型×体型(0.20) 色系×6型(0.25) 气质×风格(0.15) 场景(0.15)
+      过滤红线：尺码无货/反季节/超预算/库存 0 → 先剔除再打分。

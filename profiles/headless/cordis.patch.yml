@@ -1,0 +1,89 @@
+# Your patch layer for this dsh profile, applied after every bundle layer:
+# a top-level YAML array of loader patch entries (id-targeted config
+# overrides, disables, and insert lists; `!!js` expressions allowed).
+- id: llm-pi-ai
+  name: "@deepseek-ai/dsh-llm-pi-ai"
+  config:
+    providers:
+      sensenova-u1-fast:
+        displayName: 商汤
+        apiKeyEnv: SENSENOVA_U1_FAST_API_KEY
+        api: openai-completions
+        baseURL: http://127.0.0.1:8799/v1
+        retryPolicy:
+          mode: normal
+          maxRetries: 5
+          retryableCodes:
+            - RATE_LIMIT
+          backoff:
+            initialDelayMs: 15000
+            maxDelayMs: 60000
+            jitterRatio: 0.3
+        concurrency: 1
+        models:
+          - id: deepseek-v4-flash
+            name: deepseek-v4-flash
+            input:
+              - text
+          - id: sensenova-6.7-flash-lite
+            name: sensenova-6.7-flash-lite
+            input:
+              - text
+          - id: glm-5.2
+            name: glm-5.2
+            contextWindow: 1048576
+          - id: sensenova-6.8-flash-lite
+            name: sensenova-6.8-flash-lite
+            contextWindow: 262144
+          - id: deepseek-v4-pro
+            name: deepseek-v4-pro
+            contextWindow: 1048576
+      agnes:
+        displayName: Agnes
+        apiKeyEnv: AGNES_API_KEY
+        api: openai-completions
+        baseURL: https://api.agnes-ai.cn/v1
+        models:
+          - id: agnes-2.5-flash
+            input:
+              - text
+              - image
+          - id: agnes-image-2.1-flash
+            input:
+              - text
+              - image
+          - id: agnes-video-2.5
+          - id: agnes-video-v2.0
+          - id: agnes-3.0-flash
+            name: agnes-3.0-flash
+      xiaohongshu:
+        displayName: xiaohongshu
+        apiKeyEnv: XIAOHONGSHU_API_KEY
+        api: openai-completions
+        baseURL: https://note3-prev-api.askdiandian.com/v1
+        models:
+          - id: dots3-note-prev
+            name: dots3-note-prev
+- id: agent-default-model
+  name: "@deepseek-ai/dsh-agent-default-model"
+  config:
+    provider: agnes
+    model: agnes-2.5-flash
+- id: permission
+  name: "@deepseek-ai/dsh-permission-presets"
+  config:
+    presets:
+      read-only:
+        sandbox: read-only
+        approval: ask
+      workspace-write:
+        sandbox: workspace-write
+        approval: ask
+      danger-full-access:
+        sandbox: danger-full-access
+        approval: never
+    defaultPreset: danger-full-access
+- id: subagent
+  name: "@deepseek-ai/dsh-subagent"
+  config:
+    maxActiveSubagents: 2

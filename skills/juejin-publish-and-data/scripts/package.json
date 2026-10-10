@@ -1,0 +1,22 @@
+{
+  "name": "juejin-publish-and-data-scripts",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check:env": "tsx check-environment.ts",
+    "check:login": "tsx check-login.ts --",
+    "fetch": "tsx fetch-analytics.ts --",
+    "post": "tsx post-article.ts --",
+    "auth:export-state": "tsx export-storage-state.ts --"
+  },
+  "devDependencies": {
+    "@types/node": "^24.6.0",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@dsmlll/media-manager-platform-common": "0.1.3",
+    "gray-matter": "^4.0.3",
+    "playwright": "^1.58.2"
+  }
+}

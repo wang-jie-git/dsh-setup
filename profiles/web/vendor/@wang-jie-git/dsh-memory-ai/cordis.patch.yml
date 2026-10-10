@@ -1,0 +1,4 @@
+# @wang-jie-git/dsh-memory-ai bundle patch: 深度集成 AI-memory 语义记忆
+- insert:
+    - id: "@wang-jie-git/dsh-memory-ai"
+      name: "@wang-jie-git/dsh-memory-ai"

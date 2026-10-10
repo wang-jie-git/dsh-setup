@@ -1,0 +1,4 @@
+interface:
+  display_name: "短视频脚本"
+  short_description: "将母题转成可拍摄的口播、分镜、字幕、封面与发布字段"
+  default_prompt: "使用 $self-media-short-video 把这个母题做成可直接拍摄的短视频方案。"

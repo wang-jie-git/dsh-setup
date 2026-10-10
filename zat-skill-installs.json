@@ -1,0 +1,14 @@
+{
+  "tt-a1i/archify": {
+    "owner": "tt-a1i",
+    "repo": "archify",
+    "dirs": [
+      "DESIGN.md",
+      "archify"
+    ],
+    "names": [
+      "Archify",
+      "archify"
+    ]
+  }
+}

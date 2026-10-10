@@ -1,0 +1,38 @@
+{
+  "url": "https://example.com",
+  "title": "Example Domain",
+  "markdown": "This domain is for use in documentation examples without needing permission. Avoid use in operations.\n\n[Learn more](https://iana.org/domains/example)",
+  "metadata": {
+    "title": "Example Domain",
+    "language": "en"
+  },
+  "links": [
+    "https://iana.org/domains/example"
+  ],
+  "images": [],
+  "cached": true,
+  "cached_at": "2026-08-17 02:59:31",
+  "fetch_method": "cache",
+  "content_hash": "a80242055d7489b4ce56b3193e7521cd92ef34fdc5b6aa666d7bef8cc29ccfd5",
+  "http_status": 200,
+  "content_completeness": {
+    "level": "partial",
+    "reason": "thin_content",
+    "settled_by": "stability"
+  },
+  "evidence": [
+    {
+      "title": "Example Domain",
+      "url": "https://example.com",
+      "section_heading": null,
+      "excerpt": "This domain is for use in documentation examples without needing permission. Avoid use in operations.",
+      "score": 1,
+      "citation_id": "a50ca27461d5",
+      "source_span": {
+        "start": 0,
+        "end": 101
+      }
+    }
+  ],
+  "response_time_ms": 18028
+}

@@ -1,0 +1,8 @@
+packages:
+  - .
+
+nodeLinker: hoisted
+autoInstallPeers: false
+allowBuilds:
+  dsh-free-vision: set this to true or false
+  sharp: set this to true or false

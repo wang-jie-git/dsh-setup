@@ -1,0 +1,62 @@
+diff --git a/README.md b/README.md
+index 1f418abefcae479cae03c5dfc65d81b4ac4b806c..e8a06acdc50ffbeafef180990e7dbce4ab75478b 100644
+--- a/README.md
++++ b/README.md
+@@ -12,7 +12,7 @@ The DSH plugin ecosystem has browser-automation plugins but **no media-downloade
+ 
+ ## 特性 / Features
+ 
+-- **`video_analyze`** — 只做分析、不下载。返回 JSON：`{ isMedia, site, quality, ext, mimeHint }`。按 hostname 识别站点（bilibili / youtube / douyin / xiaohongshu / other）。
++- **`video_url_analyze`** — 只做分析、不下载。返回 JSON：`{ isMedia, site, quality, ext, mimeHint }`。按 hostname 识别站点（bilibili / youtube / douyin / xiaohongshu / other）。
+   Pure analysis, no download — classify a URL's media-ness, site, quality, container and mime hint.
+ - **`video_download`** — 用浏览器风格 User-Agent + Referer 请求媒体 URL，`fs.createWriteStream` 流式写入磁盘（默认 `./downloads/<sanitized-filename>`），跟随重定向（最多 5 次），60 秒超时（并响应执行取消）。返回 `{ savedTo, bytes, quality, ext, elapsedMs }`。
+   Stream a media URL to disk with redirect handling and a 60s timeout.
+@@ -44,7 +44,7 @@ dsh plugin --profile myprofile add github:yourname/dsh-video-downloader#<sha>
+ The agent calls the tools with:
+ 
+ ```json
+-{ "url": "https://bilivideo.com/xxx.m4s" }                              // video_analyze
++{ "url": "https://bilivideo.com/xxx.m4s" }                              // video_url_analyze
+ { "url": "https://bilivideo.com/xxx.m4s", "outPath": "./downloads/clip.mp4" }  // video_download
+ { "url": "https://example.com/video.mp4?height=720" }                   // video_quality_parse
+ ```
+@@ -57,7 +57,7 @@ The agent calls the tools with:
+ 
+ | 工具 / Tool | 参数 / Parameters | 返回 / Returns |
+ |---|---|---|
+-| `video_analyze` | `url` (string, 必填) | `{ isMedia, site, quality, ext, mimeHint }` |
++| `video_url_analyze` | `url` (string, 必填) | `{ isMedia, site, quality, ext, mimeHint }` |
+ | `video_download` | `url` (string, 必填), `outPath` (string, 可选), `headers` (object, 可选) | `{ savedTo, bytes, quality, ext, elapsedMs }` |
+ | `video_quality_parse` | `url` (string, 必填) | `{ quality, ext }` |
+ 
+diff --git a/src/index.js b/src/index.js
+index edbf07869a7b2c060d0ceff0a4cce2e4ad28211a..e230f75fc59c331081db9abe8ba8d58b5f0ad5f2 100644
+--- a/src/index.js
++++ b/src/index.js
+@@ -5,7 +5,7 @@
+  * (video-downloader-extension) OUT of the browser sandbox into pure Node
+  * functions, exposed as three agent-callable tools:
+  *
+- *   - video_analyze       : classify a URL — is it media, which site, what
++ *   - video_url_analyze   : classify a URL — is it media, which site, what
+  *                           quality / container, and a mime hint.
+  *   - video_quality_parse : pure regex quality + extension extraction.
+  *   - video_download      : stream a media URL to disk with a browser-like
+@@ -122,7 +122,7 @@ export function detectSite(url) {
+   return 'other'
+ }
+ 
+-/** One-line classification used by `video_analyze`. */
++/** One-line classification used by `video_url_analyze`. */
+ export function analyze(url) {
+   const u = String(url)
+   const ext = getExt(u)
+@@ -346,7 +346,7 @@ const renderText = (_args, value) => [{ type: 'text', text: value }]
+ 
+ export function apply(ctx) {
+   ctx.tools.register(defineTool({
+-    name: 'video_analyze',
++    name: 'video_url_analyze',
+     description:
+       'Analyze a URL without downloading: is it media, which supported site it belongs to ' +
+       '(bilibili/youtube/douyin/xiaohongshu/other), its likely quality, container extension, ' +
