@@ -79,6 +79,40 @@
         command: /Users/mac/.npm-global/bin/wigolo
         args: []
         toolCallTimeoutMs: 60000
+# ghidra 逆向 MCP（部署在联想笔记本 ziqian-laptop；SSH stdio 跨机调用；2026-10-12 新增）
+# 工具: re_analyze / re_decompile / re_strings；每文件首次分析 30-60s，之后复用 /tmp/re_workspace 缓存
+- insert:
+    - id: mcp-ghidra-re
+      name: '@deepseek-ai/dsh-mcp-client'
+      config:
+        serverName: ghidra_re
+        transport: stdio
+        command: ssh
+        args:
+          [
+            '-o',
+            'ConnectTimeout=10',
+            'ziqian-laptop',
+            '/home/ziqian/re-mcp/start.sh'
+          ]
+        toolCallTimeoutMs: 600000
+        failOnStartupError: false
+# REA 本地逆向 MCP（Mac 本机 npx rea-agents；Ghidra 12.1.4 + mac decompiler 自编译；2026-10-14 新增）
+# 与 mcp-ghidra-re（SSH 远程）并存，serverName 独立；工具: open_binary / list_strings / procedure_pseudo_code 等
+- insert:
+    - id: mcp-rea-local
+      name: '@deepseek-ai/dsh-mcp-client'
+      config:
+        serverName: rea
+        transport: stdio
+        command: /usr/local/bin/npx
+        args: [ '-y', 'rea-agents@latest', 'mcp' ]
+        env:
+          GHIDRA_INSTALL_DIR: /Users/mac/Applications/ghidra_12.1.4_PUBLIC
+          JAVA_HOME: /Users/mac/Applications/jdk-21/Contents/Home
+          REA_MCP_INPUT_SCHEMA_PROFILE: compact
+        toolCallTimeoutMs: 600000
+        failOnStartupError: false
 # [2026-10-03 token-slim] 已确认：compaction 阈值 = contextWindow × 0.8，deepseek-v4-flash/glm-5.2
 # 原配 1M 窗口 → 83.9万才压缩，会话膨胀到 60 万+ 不压缩，缓存失效时全价重建 60 万 token。
 # 修复：把 provider 的 contextWindow 降至 262144（阈值 ≈ 21万），保留 retainRatio 0.16。
@@ -268,7 +302,6 @@
           - id: persona
             name: '@deepseek-ai/dsh-persona'
             config:
-              suffix: Your working directory is {{cwd}}.
               prefix: >-
                 你是"AI 个人形象管理顾问"（内部代号 Stylist，通用形象管理专家）——服装档案 × 顾客档案 的
                 智能匹配引擎，终端的"形象管理专家 + 审美翻译官"。
@@ -361,6 +394,11 @@
           # 核心定位：不是"修图工具"或"Prompt 生成器"，而是"审美质检员 + 设计顾问 + 意境推敲者"。
           # 价值观：去繁就简、内敛克制、虚实相生、气韵为先。
 
+          # ── 执行层（2026-10-13 补：生图需要 bash/fs）────────────────────────
+          - id: tool-bash
+            name: '@deepseek-ai/dsh-tool-bash'
+          - id: tool-fs
+            name: '@deepseek-ai/dsh-tool-fs'
           # ── 技能层（知识库按需加载）───────────────────────────────────────────
           # 技能注册表在 host composition；这些行注册进本 preset 的层，无需 realm。
           # 本 preset 目录下的 skills/song-cao-kb/ 会被 skill-filesystem 自动发现。
@@ -388,7 +426,6 @@
           - id: persona
             name: '@deepseek-ai/dsh-persona'
             config:
-              suffix: Your working directory is {{cwd}}.
               prefix: >-
                 你是"国风设计引擎"（Oriental Design Engine）——东方审美辅助工具，
                 内部代号"宋韵新中式设计助手"（CAO, Chief Aesthetic Officer）。
@@ -531,7 +568,6 @@
           - id: persona
             name: '@deepseek-ai/dsh-persona'
             config:
-              suffix: Your working directory is {{cwd}}.
               prefix: >-
                 你是"商品属性智能体"（内部代号 Garment Matcher）——NocoBase 零售系统的商品风格属性鉴定专家。
 
@@ -575,3 +611,5 @@
 - insert:
     - id: dsh-worktable
       name: dsh-worktable
+- id: diagnosis-wizard
+  disabled: true
