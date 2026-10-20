@@ -12,6 +12,10 @@
 //     stylist_photo_register —— 照片入库（photo_consent 门禁 → data/customers/<id>/photos/）
 //     stylist_photo_metrics  —— 客观皮肤色度量（python/PIL → LAB/底色/色季初判/质量告警）
 //     stylist_profile_apply  —— 视觉判读结果回填档案（置信度标注 + analysis 审计块）
+//   管理/迁移层（v1.5）：
+     // stylist_index_rebuild   —— 档案总览索引 + NocoBase 迁移清单（data/index.json）
+     // stylist_customer_archive —— 顾客软删除/恢复/筛选（archived 标记 + filter）
+     // stylist_card_manage     —— 决策卡 list/delete/preview（含桌面副本同步清理）
 //
 // 数据契约（单一事实源）：
 //   服装档案：/Users/mac/Desktop/宋式美学智能体/golden-dataset/garments/<item_id>.json（CAO 写，Stylist 读）
@@ -20,8 +24,10 @@
 //   反馈闭环：/Users/mac/Desktop/个人形象管理/data/feedback/<item_id>.feedback.json
 // 服装库读取优先级：共享 CAO 目录存在则读共享（单事实源）；不存在回退本地 data/garments/（MVP 测试用）。
 
-import { readdirSync, readFileSync, writeFileSync, mkdirSync, existsSync, copyFileSync } from 'node:fs'
+import { readdirSync, readFileSync, writeFileSync, mkdirSync, existsSync, copyFileSync, unlinkSync } from 'node:fs'
 import { join, basename } from 'node:path'
+import { homedir } from 'node:os'
+
 import { execFile } from 'node:child_process'
 import { promisify } from 'node:util'
 
@@ -39,6 +45,8 @@ const CUSTOMERS = `${DATA}/customers`
 const PLANS = `${DATA}/plans`
 const FEEDBACK = `${DATA}/feedback`
 const DIAGNOSIS = `${DATA}/diagnosis`
+const CARDS = `${DATA}/cards`
+const INDEX = `${DATA}/index.json`
 
 function garmentsRoot() {
   return existsSync(SHARED_GARMENTS) ? SHARED_GARMENTS : `${DATA}/garments`
@@ -634,6 +642,461 @@ export function apply(ctx) {
         return { ok: true, ...report, saved_path: jsonPath, md_path: mdPath, desktop_path }
       }
       return { ok: true, ...report, saved_path: null, md_path: null, desktop_path: null }
+    },
+  })
+
+  // ── 口袋决策卡（v1.5 双轨制·北极星：诊断 confirmed 后的高频日常入口，SKILL.md §十三）──────
+  // 产出规则（硬性）：数据源唯一（confirmed 诊断/档案）· 压缩投影不新判定 · 一客一卡版本递增
+  // 卡面三块：①3 色衣橱配色盘 ②版型 2 红线 ③购物闸门 + 半年复查区
+  ctx.tools.register({
+    name: 'stylist_decision_card',
+    description:
+      '口袋决策卡（v1.5 北极星，SKILL.md §十三）：从 confirmed 诊断/档案派生"顾客早上出门 30 秒能用"的决策卡——' +
+      '①3 色衣橱配色盘（主色+辅色+中性色，任意两件都是对的）②版型 2 红线（由身体线条/骨架/功能诉求生成）' +
+      '③购物闸门（"除非你疯狂地爱它、极度需要它，否则不买" + 价格÷预期穿着次数）+ 半年复查区（时间分配对照）。' +
+      '门禁：色季与 6型色彩必须已 confirmed，否则拒卡并列出缺口。落盘 data/cards/<cid>/CARD-*.md + 桌面副本。',
+    parameters: {
+      customer_id: { type: 'string', required: true },
+      occasion_focus: { type: 'string', description: '可选：卡片场合侧重点（如"商务对接"），影响配色盘示例话术；缺省按档案常驻场合' },
+      gate_rule: { type: 'string', description: '可选：覆盖购物闸门话术（默认原书黄金准则 + 穿着成本公式）' },
+    },
+    output: jsonRender(),
+    async execute(args) {
+      const customer = readJson(join(CUSTOMERS, `${args.customer_id}.json`))
+      if (!customer) return { ok: false, error: `顾客 ${args.customer_id} 不存在，先建档（stylist_customer_new）。` }
+      if (customer.archived === true) return { ok: false, rejected: true, reason: `顾客 ${args.customer_id} 已归档，不出卡。需先 stylist_customer_archive(action=restore) 恢复。`, next: '恢复档案后再出卡' }
+
+      const skin = customer.skin_tone || {}
+      const body = customer.body || {}
+      const style = customer.style || {}
+      const wardrobe = customer.wardrobe || {}
+      const quiz = customer.analysis?.quiz || {}
+
+      // ── 门禁：色季 + 6型色彩必须 confirmed（双轨制不变量：卡只从定案派生）──
+      const gs = latestDiagnosis(args.customer_id)
+      const colorSeasonOk = !!quiz.confirmed_season || !!(gs && (gs.findings || []).find((f) => f.dimension === 'color_season' && f.confirmed))
+      const colorSystemOk = !!quiz.confirmed_primary_type || !!(gs && (gs.findings || []).find((f) => f.dimension === 'color_system' && f.confirmed))
+      const missing = []
+      if (!colorSeasonOk) missing.push('色季未 confirmed（补 §9.4A 色季问卷定案）')
+      if (!colorSystemOk) missing.push('6型色彩未 confirmed（补 §9.4B 叙述自选定案）')
+      if (missing.length) {
+        return {
+          ok: false,
+          rejected: true,
+          reason: '诊断未全绿 confirmed，禁止凭感觉出卡（§13.1）。缺口：' + missing.join('；') + '。',
+          missing,
+          next: '先补鉴定（stylist_diagnosis_report），全绿 confirmed 后再出卡；期间顾客"今天穿什么"按已 confirmed 维度口头给建议，不交付卡片。',
+        }
+      }
+
+      // ── ① 3 色衣橱配色盘（ch05 三要素·颜色 + ch07 主+次+中性；色区按诊断 6型 × 品牌层适配）──
+      const cs = skin.color_system || {}
+      const season = gs ? (gs.findings || []).find((f) => f.dimension === 'color_season')?.conclusion : skin.color_season
+      const palette = {
+        main: season ? `${season || '诊断色季'}安全色区` : cs.primary_type ? `${cs.primary_type}色区` : '待定',
+        secondary: cs.secondary_type ? `${cs.secondary_type}色区（添变化弹性）` : '与主型同频辅色',
+        neutral: wardrobe.neutral_colors?.length ? wardrobe.neutral_colors.join(' / ') : '中性色表选 2-3（黑/灰/驼/海军蓝/可可）',
+        accent: wardrobe.three_colors?.length ? `个性色 1：${(wardrobe.three_colors).slice(0, 1).join('、')}（高饱和点缀 ≤10%）` : '个性色 1（高饱和点缀 ≤10%，从 6 型安全色区选）',
+      }
+
+      // ── ② 版型 2 红线（ch02/03 同轴匹配 + 功能诉求）──
+      const line = body.body_line || '未定'
+      const redline = []
+      if (line.includes('曲线') || line.includes('柔和')) redline.push(`买外套先看收腰与摆量：曲线系选收腰+微摆，避开 H 形直筒；垫肩做结构支撑`)
+      else if (line.includes('直线')) redline.push(`买外套先看肩线与衣长：直线系选利落直筒/微A，${body.skeleton ? body.skeleton + '骨架适配量感' : '避开软塌垂坠'}；腰头不贴肚（腹部修饰）`)
+      else redline.push('线条未定：先试直筒与收腰各一件，按上身效果定轴')
+      redline.push(body.slim_goal ? `功能红线：${body.slim_goal}（选版型/长度时优先满足）` : '功能红线：无特别诉求，以场合策略为主')
+
+      // ── ③ 购物闸门（ch05 p-010/p-158）──
+      const gate = args.gate_rule || '除非你疯狂地爱它、极度需要它，否则就不要买它；成本 = 价格 ÷ 预期穿着次数（不是绝对价格）。'
+
+      // ── 半年复查区（ch05 时间分配对照）──
+      const review = [
+        '每半年（或生活状态变化时）对照：一周时间分配 vs 衣橱单品比例，找失衡项',
+        wardrobe.has?.length ? `已有 ${wardrobe.has.length} 件，缺口见 wardrobe_plan` : '缺口清单见 stylist_wardrobe_plan',
+        '失衡先补缺口，不靠"再买一件"解决',
+      ]
+
+      // ── ④ 场景速配（v1.5 增强：按场合×风格策略压缩 2-3 条"该场合的最优单品+配饰"）──
+      const seasonFull = (gs ? (gs.findings || []).find((f) => f.dimension === 'color_season')?.conclusion : skin.color_season) || ''
+      const safeZone = seasonFull.includes('冬') ? '深冷+鲜明（纯黑/纯白/海军蓝/深梅子/正红点缀）'
+        : seasonFull.includes('夏') ? '浅冷+清雅（天青/灰蓝/淡粉/灰白）'
+        : seasonFull.includes('秋') ? '深暖+浊（可可/砖红/橄榄绿/驼/深梅子）'
+        : seasonFull.includes('春') ? '浅暖+清爽（珊瑚/水绿/杏粉/浅黄）'
+        : '中性色为主（黑/灰/驼/海军蓝）'
+      const stylePrimary = style.style_type?.primary || '自然'
+      const scenes = (style.life?.scenes || ['职场通勤', '日常休闲']).slice(0, 3)
+      // 性别适配单品库（v1.5 增强：按 basic_info.sex 切换"该场合最优单品"取哪套库）
+      const sex = customer.basic_info?.sex || '不区分'
+      const sceneMap = {
+        '职场通勤': sex === '男'
+          ? `优雅策略：${stylePrimary === '优雅' ? '结构感肩线西装 + 直筒西裤，配饰克制' : '利落直筒西裤 + 收腰外套，配饰克制'}`
+          : sex === '女'
+          ? `优雅策略：${stylePrimary === '优雅' ? '结构感肩线西装 + 直筒高腰裤，配饰中等量感' : '利落直筒西裤 + 收腰外套，配饰克制'}`
+          : `因地制宜：${stylePrimary}策略，配色限定 ${safeZone}`,
+        '日常休闲': sex === '男'
+          ? '自然策略：直筒裤 + 基础衬衫/针织，不费力；点缀色 ≤1 件'
+          : sex === '女'
+          ? '自然策略：垂感针织/直筒裤 + 基础衬衫，不费力；点缀色 ≤1 件'
+          : `因地制宜：${stylePrimary}策略，配色限定 ${safeZone}`,
+        '高端晚宴': sex === '男'
+          ? '优雅：正式西裤 + 衬衫/缎面内搭 + 结构外套，配色盘内高饱和点缀（≤1 件）'
+          : sex === '女'
+          ? '浪漫/优雅：垂感裙/缎面单品 + 结构外套，配色盘内高饱和点缀'
+          : '优雅：正式单品 + 点缀色，配色盘内高饱和（≤1 件）',
+        '户外摄影': '自然策略：中性色打底 + 1 件品牌色单品做记忆点',
+        '节庆宴会': sex === '男'
+          ? '优雅：正式单品 + 点缀色（正红/宝蓝），避免全身高饱和'
+          : sex === '女'
+          ? '优雅：正式单品 + 点缀色（正红/宝蓝），避免全身高饱和'
+          : '优雅：正式单品 + 点缀色，避免全身高饱和',
+      }
+      const quickScenes = scenes.map((s) => ({ scene: s, strategy: sceneMap[s] || `因地制宜：${stylePrimary}策略，配色限定 ${safeZone}` })).slice(0, 3)
+
+      // ── 落盘：一客一卡，版本递增，历史不覆盖 ──
+      const date = new Date()
+      const stamp = `${date.getFullYear()}${String(date.getMonth() + 1).padStart(2, '0')}${String(date.getDate()).padStart(2, '0')}`
+      const dir = join(CARDS, args.customer_id)
+      mkdirSync(dir, { recursive: true })
+      const existing = existsSync(dir) ? readdirSync(dir).filter((x) => x.startsWith(`CARD-${stamp}-`)).length : 0
+      const card_id = `CARD-${stamp}-${String(existing + 1).padStart(3, '0')}`
+
+      const md = [
+        `# 口袋决策卡 · ${args.customer_id}`,
+        `> ${card_id} · ${date.toLocaleString('zh-CN')} · 品牌层：${style.aesthetic_preference || '无特定'}`,
+        ``,
+        `## ① 3 色衣橱配色盘（任意两件都是对的）`,
+        `- 主色：${palette.main}`,
+        `- 辅色：${palette.secondary}`,
+        `- 中性色：${palette.neutral}`,
+        `- 点缀色：${palette.accent}`,
+        ``,
+        `## ② 版型 2 红线`,
+        ...redline.map((r, i) => `${i + 1}. ${r}`),
+        ``,
+        `## ③ 购物闸门`,
+        `> ${gate}`,
+        ``,
+        `## ④ 场景速配（该场合怎么穿，30 秒对照）`,
+        ...quickScenes.map((q) => `- **${q.scene}**：${q.strategy}`),
+        `  · 配色一律限安全色区：${safeZone}`,
+        ``,
+        `## 半年复查区`,
+        ...review.map((r) => `- ${r}`),
+        ``,
+        `---`,
+        `出卡依据：诊断 ${(gs ? gs.diagnosis_id : '档案 confirmed')} · 色季 ${skin.color_season || '—'} · 6型 ${cs.primary_type || '—'}${cs.secondary_type ? '+' + cs.secondary_type : ''} · 线条 ${line} · 骨架 ${body.skeleton || '—'} · 风格 ${style.style_type?.primary || '—'}${args.occasion_focus ? ` · 场合侧重 ${args.occasion_focus}` : ''}`,
+        `（决策卡 v1.5 · 数据源唯一：confirmed 诊断/档案 · 压缩投影不新判定 · 原书锚点 ch04 场合×风格 + ch05/ch07）`,
+      ].join('\n')
+
+      const mdPath = join(dir, `${card_id}.md`)
+      writeFileSync(mdPath, md, 'utf-8')
+      let desktop_path = null
+      try {
+        desktop_path = join(WORKSPACE, '..', `口袋决策卡-${args.customer_id}.md`)
+        writeFileSync(desktop_path, md, 'utf-8')
+      } catch {
+        desktop_path = null
+      }
+
+      return {
+        ok: true,
+        card_id,
+        customer_id: args.customer_id,
+        gate: gate,
+        redline,
+        palette,
+        quickScenes,
+        based_on: gs ? gs.diagnosis_id : '档案 confirmed',
+        md,
+        saved_path: mdPath,
+        desktop_path,
+      }
+    },
+  })
+
+  // ── 档案总览索引（管理可查询 + 将来 NocoBase 迁移清单）────────────────
+  ctx.tools.register({
+    name: 'stylist_index_rebuild',
+    description:
+      '重建 data/index.json（档案/诊断/决策卡/服装/方案/反馈 汇总索引 + 可迁移清单）。' +
+      '管理用途：工作台/CLI 查询"所有冬季型顾客""所有全绿诊断"时读本索引，不必逐个扫 JSON。' +
+      '迁移用途：index.json 含 migration_to_nocobase 块（目标集合 customer_image_profiles/garment_profiles + 待迁移 ID 清单），' +
+      'NocoBase ERP 成熟后按此清单一键建集合+灌数据。调用即重建（读取 data/ 全目录，幂等）。',
+    parameters: {},
+    output: jsonRender(),
+    async execute() {
+      // 简单递归：按顶层目录分流，收集指定后缀文件
+      const collect = (rootDir, ext) => {
+        const out = []
+        if (!existsSync(rootDir)) return out
+        const walk = (p) => {
+          for (const e of readdirSync(p, { withFileTypes: true })) {
+            const full = join(p, e.name)
+            if (e.isDirectory()) walk(full)
+            else if (e.name.endsWith(ext) && !e.name.startsWith('_')) out.push(full)
+          }
+        }
+        walk(rootDir)
+        return out
+      }
+      const index = { spec_version: '1.0', generated_at: new Date().toISOString() }
+      // 顾客（customers/*.json，排除照片目录）
+      index.customers = collect(CUSTOMERS, '.json').map((f) => {
+        const c = readJson(f) || {}
+        const an = c.analysis || {}
+        return {
+          customer_id: c.customer_id, nickname: c.nickname,
+          sex: c.basic_info?.sex, color_season: c.skin_tone?.color_season,
+          confirmed_season: an.quiz?.confirmed_season, confirmed_primary: an.quiz?.confirmed_primary_type,
+          photo_consent: c.privacy?.photo_consent,
+          photo_reliability: an.photo_metrics?.reliable,
+          archived: !!c.archived,
+          file: f,
+        }
+      }).filter((c) => c.customer_id)
+      // 诊断
+      index.diagnoses = collect(DIAGNOSIS, '.json').map((f) => {
+        const d = readJson(f) || {}
+        const conf = (d.findings || []).filter((x) => x.confirmed).map((x) => x.dimension)
+        return { diagnosis_id: d.diagnosis_id, customer_id: d.customer_id, issued_at: d.issued_at, all_confirmed: conf.length === 5, confirmed_dimensions: conf, verdict: (d.verdict || '').slice(0, 50), file: f }
+      }).filter((d) => d.diagnosis_id)
+      // 决策卡
+      index.cards = collect(CARDS, '.md').map((f) => {
+        const txt = readFileSync(f, 'utf-8')
+        const cust = f.split('/').slice(-2, -1)[0]
+        const head = txt.split('\n').filter((l) => l.startsWith('## '))
+        return { card_id: f.split('/').pop().replace('.md', ''), customer_id: cust, file: f, desktop_copy: `~/Desktop/口袋决策卡-${cust}.md`, sections: head.map((h) => h.replace('## ', '')) }
+      })
+      // 服装
+      index.garments = collect(garmentsRoot(), '.json').map((f) => {
+        const g = readJson(f) || {}
+        return { item_id: g.item_id, name: g.name, category: g.category, fits_body_types: g.matching?.fits_body_types, best_scenes: g.matching?.best_scenes, archived: !!g.archived, file: f }
+      }).filter((g) => g.item_id)
+      // 方案 + 反馈
+      index.plans = collect(PLANS, '.json').map((f) => (readJson(f) || {}).plan_id || f.split('/').pop().replace('.json', ''))
+      index.feedback_items = collect(FEEDBACK, '.json').map((f) => f.split('/').pop().replace('.feedback.json', '').replace('.json', '')).filter((x) => x && x !== '_summary')
+      // 迁移清单（将来 NocoBase 一键建集合+灌数据用）
+      index.migration_to_nocobase = {
+        status: '未迁移（等 NocoBase ERP 成熟 + 商品属性智能体就绪）',
+        target_collections: {
+          customer_image_profiles: index.customers.map((c) => c.customer_id),
+          garment_profiles: index.garments.map((g) => g.item_id),
+          diagnosis_reports: index.diagnoses.map((d) => d.diagnosis_id),
+          decision_cards: index.cards.map((c) => c.card_id),
+        },
+        fact_source_rule: '迁移后 NocoBase 为单一事实源，data/ 降级为缓存/备份（见 08.双智能体架构-接入NocoBase零售方案.md）',
+      }
+      writeFileSync(INDEX, JSON.stringify(index, null, 2), 'utf-8')
+      return { ok: true, index: INDEX, counts: { customers: index.customers.length, diagnoses: index.diagnoses.length, cards: index.cards.length, garments: index.garments.length, plans: index.plans.length, feedback: index.feedback_items.length }, migration: index.migration_to_nocobase }
+    }  })
+
+  // ── 顾客档案 软删除/恢复/筛选（第 15 工具）──────────────────────────
+  ctx.tools.register({
+    name: 'stylist_customer_archive',
+    description:
+      '顾客档案筛选与软删除管理：action=archive（标记 archived=true，不再出现在筛选/匹配池，文件保留）/ ' +
+      'action=restore（恢复）/ action=filter（按 sex、color_season、archived、search 过滤档案列表）。' +
+      '软删除不物理删文件（迁移钩子需保留历史）；filter 用于工作台窗口 3 查询。',
+    parameters: {
+      action: { type: 'string', enum: ['archive', 'restore', 'filter'], required: true },
+      customer_id: { type: 'string', description: 'archive/restore 必填' },
+      sex: { type: 'string', enum: ['男', '女', '不区分'], description: 'filter 可选' },
+      color_season: { type: 'string', description: 'filter 可选（如"冬季型"）' },
+      archived: { type: 'boolean', description: 'filter 可选：true 只看已归档 / false 只看未归档 / 缺省=全部' },
+      search: { type: 'string', description: 'filter 可选：模糊搜 customer_id / nickname' },
+    },
+    output: jsonRender(),
+    async execute(args) {
+      if (args.action === 'filter') {
+        const results = []
+        if (existsSync(CUSTOMERS)) {
+          for (const f of readdirSync(CUSTOMERS)) {
+            if (!f.endsWith('.json')) continue
+            const c = readJson(join(CUSTOMERS, f))
+            if (!c) continue
+            if (args.sex && c.basic_info?.sex !== args.sex) continue
+            if (args.color_season && c.skin_tone?.color_season !== args.color_season) continue
+            if (typeof args.archived === 'boolean' && !!c.archived !== args.archived) continue
+            if (args.search) {
+              const q = args.search.toLowerCase()
+              const hay = ((c.customer_id || '') + ' ' + (c.nickname || '')).toLowerCase()
+              if (!hay.includes(q)) continue
+            }
+            results.push({
+              customer_id: c.customer_id, nickname: c.nickname, sex: c.basic_info?.sex,
+              color_season: c.skin_tone?.color_season, confirmed_season: c.analysis?.quiz?.confirmed_season,
+              confirmed_primary: c.analysis?.quiz?.confirmed_primary_type,
+              archived: !!c.archived, photo_consent: c.privacy?.photo_consent,
+            })
+          }
+        }
+        return { ok: true, action: 'filter', count: results.length, results }
+      }
+      // archive / restore
+      const file = join(CUSTOMERS, `${args.customer_id}.json`)
+      const customer = readJson(file)
+      if (!customer) return { ok: false, error: `顾客 ${args.customer_id} 不存在` }
+      customer.archived = args.action === 'archive'
+      customer.updated_at = new Date().toISOString()
+      writeFileSync(file, JSON.stringify(customer, null, 2), 'utf-8')
+      return { ok: true, action: args.action, customer_id: args.customer_id, archived: customer.archived }
+    },
+  })
+
+  // ── 决策卡 筛选/删除（第 16 工具）─────────────────────────────────────
+  ctx.tools.register({
+    name: 'stylist_card_manage',
+    description:
+      '决策卡管理：action=list（按顾客列出全部卡）/ action=delete（删除指定卡，同步清桌面副本）/ ' +
+      'action=preview（返回卡面 MD 文本）。删除是真删除（.md 文件），历史卡版本可保留也可删。' +
+      '配合 stylist_index_rebuild 重建索引。',
+    parameters: {
+      action: { type: 'string', enum: ['list', 'delete', 'preview'], required: true },
+      customer_id: { type: 'string', description: 'list 可选（限定该顾客）；delete/preview 必填' },
+      card_id: { type: 'string', description: 'delete/preview 必填（如 CARD-20261010-002）' },
+    },
+    output: jsonRender(),
+    async execute(args) {
+      const dir = args.customer_id ? join(CARDS, args.customer_id) : CARDS
+      if (args.action === 'list') {
+        const out = []
+        const dirs = existsSync(dir) ? readdirSync(dir, { withFileTypes: true }) : []
+        const scan = (p) => {
+          for (const e of readdirSync(p, { withFileTypes: true })) {
+            const full = join(p, e.name)
+            if (e.isDirectory()) scan(full)
+            else if (e.name.endsWith('.md')) {
+              const cust = p.split('/').pop()
+              const head = readFileSync(full, 'utf-8').split('\n').filter((l) => l.startsWith('## ')).map((h) => h.replace('## ', ''))
+              out.push({ card_id: e.name.replace('.md', ''), customer_id: cust, file: full, sections: head })
+            }
+          }
+        }
+        if (existsSync(dir) && args.customer_id) scan(dir)
+        else if (existsSync(CARDS)) scan(CARDS)
+        return { ok: true, action: 'list', count: out.length, cards: out }
+      }
+      // delete / preview 都需 customer_id + card_id
+      if (!args.customer_id || !args.card_id) return { ok: false, error: 'delete/preview 需 customer_id + card_id' }
+      const file = join(CARDS, args.customer_id, `${args.card_id}.md`)
+      if (args.action === 'preview') {
+        if (!existsSync(file)) return { ok: false, error: `卡 ${args.card_id} 不存在（查 stylist_card_manage action=list）` }
+        return { ok: true, action: 'preview', card_id: args.card_id, md: readFileSync(file, 'utf-8') }
+      }
+      // delete
+      if (!existsSync(file)) return { ok: false, error: `卡 ${args.card_id} 不存在` }
+      const del = []
+      del.push(file)
+      unlinkSync(file)
+      // 同步清桌面副本（若该卡是该顾客最新卡）
+      const desktop = join(`${WORKSPACE}`, `../../口袋决策卡-${args.customer_id}.md`)
+      const desktopReal = join(homedir(), `Desktop/口袋决策卡-${args.customer_id}.md`)
+      if (existsSync(desktopReal)) {
+        unlinkSync(desktopReal)
+        del.push(desktopReal)
+      }
+      return { ok: true, action: 'delete', card_id: args.card_id, customer_id: args.customer_id, deleted: del, hint: '已删，建议发"重建档案索引"刷新窗口3' }
+    },
+  })
+
+
+  // 辅助：取该顾客最新一份诊断报告（按 diagnosis_id 排序）
+  function latestDiagnosis(cid) {
+    const d = join(DIAGNOSIS, cid)
+    if (!existsSync(d)) return null
+    const files = readdirSync(d)
+      .filter((x) => x.endsWith('.json'))
+      .sort()
+      .reverse()
+    for (const f of files) {
+      const p = join(d, f)
+      try {
+        return JSON.parse(readFileSync(p, 'utf-8'))
+      } catch {
+        continue
+      }
+    }
+    return null
+  }
+
+  // ── M4 反馈闭环：feedback/ 聚合 → 反向定制信号（供 CAO 创作侧读取）──────────────
+  ctx.tools.register({
+    name: 'stylist_feedback_summary',
+    description:
+      'M4 反馈闭环聚合（供 CAO 反向定制）：扫描 data/feedback/*.json，按 item_id 汇总信号分布（sold/returned/mismatch 计数）+ 顾客画像切片，' +
+      '产出反向定制信号（正向单品可加库存/再设计；负向反哺 CAO 版型/色彩修正）。可落盘 data/feedback/_summary.json。',
+    parameters: {
+      top: { type: 'number', description: '正负信号各取 Top N（默认 5）' },
+      save: { type: 'boolean', description: '是否落盘 _summary.json（默认 true）' },
+    },
+    output: jsonRender(),
+    async execute(args) {
+      const top = args.top || 5
+      const save = args.save !== false
+      const dir = FEEDBACK
+      if (!existsSync(dir)) return { ok: false, error: `反馈目录 ${dir} 不存在（先有 feedback_save 数据）。` }
+      const files = readdirSync(dir).filter((f) => f.endsWith('.json') && !f.startsWith('_'))
+
+      const byItem = new Map()
+      let totalRecords = 0
+      for (const f of files) {
+        let doc
+        try {
+          doc = JSON.parse(readFileSync(join(dir, f), 'utf-8'))
+        } catch {
+          continue
+        }
+        const item = doc.item_id || f.replace(/\.feedback\.json$/, '').replace(/\.json$/, '')
+        if (!byItem.has(item)) byItem.set(item, { signals: new Map(), customers: new Map(), notes: [] })
+        const b = byItem.get(item)
+        for (const rec of doc.records || []) {
+          totalRecords++
+          const sig = rec.signal || 'unknown'
+          b.signals.set(sig, (b.signals.get(sig) || 0) + 1)
+          const cust = rec.customer || {}
+          const key = JSON.stringify([cust.customer_id, cust.body_type, cust.body_line, cust.color_season])
+          if (!b.customers.has(key)) b.customers.set(key, cust)
+          if (rec.note) b.notes.push(rec.note)
+        }
+      }
+
+      const score = (b) => (b.signals.get('sold') || 0) - ((b.signals.get('returned') || 0) + (b.signals.get('mismatch') || 0))
+      const ranked = [...byItem.entries()].map(([item, b]) => ({
+        item_id: item,
+        signals: Object.fromEntries(b.signals),
+        net: score(b),
+        customers: [...b.customers.values()].map((c) => ({ customer_id: c.customer_id, body_type: c.body_type, body_line: c.body_line, color_season: c.color_season })),
+        notes: b.notes,
+      }))
+      const positives = ranked.filter((r) => r.net > 0).sort((a, b) => b.net - a.net).slice(0, top)
+      const negatives = ranked.filter((r) => r.net < 0).sort((a, b) => a.net - b.net).slice(0, top)
+
+      const insights = []
+      for (const p of positives) {
+        const c = p.customers[0] || {}
+        insights.push(`✅ ${p.item_id} 净正向（sold ${p.signals.sold || 0}）：在 ${(c.color_season || c.body_line || c.body_type || '未知画像')} 顾客上成交 → 可加库存/同类再设计`)
+      }
+      for (const n of negatives) {
+        insights.push(`⚠️ ${n.item_id} 净负向（退/不适配 ${((n.signals.returned || 0) + (n.signals.mismatch || 0))}）→ CAO 侧检查版型/色彩错配并修正设计`)
+      }
+      if (!insights.length) insights.push('当前反馈样本不足（净信号为 0 或 <2 条记录），暂不产定制信号，待积累。')
+
+      const summary = {
+        generated_at: new Date().toISOString(),
+        total_items: ranked.length,
+        total_records: totalRecords,
+        positives,
+        negatives,
+        insights,
+        rule: '正向=可加库存/再设计；负向=反哺 CAO 版型/色彩修正；CAO 侧定期读 _summary.json',
+      }
+      let saved_path = null
+      if (save) {
+        saved_path = join(dir, '_summary.json')
+        writeFileSync(saved_path, JSON.stringify(summary, null, 2), 'utf-8')
+      }
+      return { ok: true, ...summary, saved_path }
     },
   })
 }

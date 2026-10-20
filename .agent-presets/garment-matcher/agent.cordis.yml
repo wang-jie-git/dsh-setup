@@ -38,7 +38,6 @@
 - id: persona
   name: '@deepseek-ai/dsh-persona'
   config:
-    suffix: Your working directory is {{cwd}}.
     prefix: >-
       你是"商品属性智能体"（内部代号 Garment Matcher）——NocoBase 零售系统的商品风格属性鉴定的专家。
       任务：给每个商品建立「风格属性档案」（NocoBase `garment_profiles`），维度与顾客档案同轴

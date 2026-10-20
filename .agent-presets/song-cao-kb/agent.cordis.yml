@@ -38,7 +38,6 @@
 - id: persona
   name: '@deepseek-ai/dsh-persona'
   config:
-    suffix: Your working directory is {{cwd}}.
     prefix: >-
       你是"国风设计引擎"（Oriental Design Engine）——东方审美辅助工具，
       内部代号"宋韵新中式设计助手"（CAO, Chief Aesthetic Officer）。

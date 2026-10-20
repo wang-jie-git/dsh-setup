@@ -32,39 +32,20 @@ media image gen --prompt "描述" --image output/{slug}/cover.png
 2. Script path = `{baseDir}/scripts/main.ts`
 3. Resolve `${BUN_X}` runtime: if `bun` installed → `bun`; if `npx` available → `npx -y bun`; else suggest installing bun
 
-## Step 0: Load Preferences ⛔ BLOCKING
+## Step 0: Load Preferences (One-Prime patch 2026-10-13: 免读文件，配置已就绪)
 
-**CRITICAL**: This step MUST complete BEFORE any image generation. Do NOT skip or defer.
+**配置已由 One-Prime 预置**（`{baseDir}/.config/EXTEND.md` 存在 + `{baseDir}/.env` 自动加载），
+**不要**尝试用文件读取工具打开 EXTEND.md（dsh 沙箱只允许 ObsidianVault，读 skill 目录会 Access denied 卡死）。
 
-Check EXTEND.md existence (priority: skill root):
+当前有效配置（写死，直接使用，无需读取）：
+- default_provider: openai
+- default_model.openai: agnes-image-2.1-flash（或 .env 里 BAOYU_IMAGE_GEN_OPENAI_IMAGE_MODEL 指定的模型）
+- API 凭据：由 `{baseDir}/.env` 自动加载（脚本 loadEnv() 处理）
+- 输出：按用户指定路径
 
-```bash
-# macOS, Linux, WSL, Git Bash
-test -f "{baseDir}/.config/EXTEND.md" && echo ".config"
-test -f "{baseDir}/EXTEND.md" && echo "root"
-```
+**直接进入 Usage 节**：构造提示词 + 调用 `${BUN_X} {baseDir}/scripts/main.ts --prompt "..." --image <输出路径>` 生成。
 
-```powershell
-# PowerShell (Windows)
-if (Test-Path "{baseDir}/.config/EXTEND.md") { ".config" }
-if (Test-Path "{baseDir}/EXTEND.md") { "root" }
-```
-
-| Result    | Action                                                                                                                                    |
-| --------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| Found     | Load, parse, apply settings. If `default_model.[provider]` is null → ask model only (Flow 2)                                              |
-| Not found | ⛔ Run first-time setup ([references/config/first-time-setup.md](references/config/first-time-setup.md)) → Save EXTEND.md → Then continue |
-
-**CRITICAL**: If not found, complete the full setup (provider + model + quality + save location) using AskUserQuestion BEFORE generating any images. Generation is BLOCKED until EXTEND.md is created.
-
-| Path                          | Location                 |
-| ----------------------------- | ------------------------ |
-| `{baseDir}/.config/EXTEND.md` | Skill root (recommended) |
-| `{baseDir}/EXTEND.md`         | Skill root (fallback)    |
-
-**EXTEND.md Supports**: Default provider | Default quality | Default aspect ratio | Default image size | Default models | Batch worker cap | Provider-specific batch limits
-
-Schema: `references/config/preferences-schema.md`
+如果生成的图像需要保存到 dsh 会话（供用户查看），生成后把图片路径返回给用户即可。
 
 ## Usage
 

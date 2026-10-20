@@ -4,6 +4,7 @@ allowBuilds:
   sharp: true
   node-pty: true
   dsh-artifact-preview: true
+  '@google/genai': true
 minimumReleaseAgeExclude:
   - '@deepseek-ai/dsh-agent@0.1.5-rc.1'
   - '@deepseek-ai/dsh-attachment@0.1.5-rc.1'
@@ -24,6 +25,7 @@ minimumReleaseAgeExclude:
   - '@deepseek-ai/dsh-user-approval@0.1.5-rc.1'
   - '@deepseek-ai/dsh-util-crypto@0.1.5-rc.1'
   - '@deepseek-ai/dsh-util-values@0.1.5-rc.1'
+  - dsh-workbuddy-connect@0.7.3 || 0.7.9
 onlyBuiltDependencies:
   - dsh-free-vision
   - protobufjs

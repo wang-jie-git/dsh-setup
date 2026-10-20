@@ -49,3 +49,9 @@ image-generation.json
 settings.yaml*
 skills/*/.env
 skills/baoyu-image-gen/.env*
+
+# workbuddy 插件运行时状态（动态变化，不入库）
+.workbuddy-*.json
+
+# watch 同步 PID 文件
+scripts/.watch_sync.pid

@@ -10,7 +10,7 @@ default_aspect_ratio: null
 default_image_size: null
 default_model:
   google: null
-  openai: qwen-image-3.0-pro
+  openai: agnes-image-2.1-flash
   openrouter: null
   dashscope: null
   replicate: null

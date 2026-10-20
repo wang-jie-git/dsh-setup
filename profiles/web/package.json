@@ -4,8 +4,10 @@
   "dependencies": {
     "@deepseek-ai/cordis": "^4.0.4",
     "@local/diagnosis-wizard": "link:/Users/mac/Desktop/个人形象管理/bundles/diagnosis-wizard",
+    "@local/dsh-ysr-bridge": "link:/Users/mac/.dsh/profiles/web/plugins/dsh-ysr-bridge",
     "@local/song-cao-design-wizard": "link:/Users/mac/Desktop/宋式美学智能体/bundles/song-cao-design-wizard",
     "dsh-free-vision": "^1.0.8",
+    "dsh-workbuddy-connect": "0.7.9",
     "dsh-worktable": "https://github.com/Aisland-SJL/dsh-worktable/releases/download/v0.4.0/dsh-worktable-0.4.0.tgz"
   },
   "dsh": {
@@ -15,7 +17,17 @@
         "@deepseek-ai/dsh-web-app",
         "dsh-free-vision",
         "@local/song-cao-design-wizard",
-        "@deepseek-ai/dsh-experimental-inspector-profile"
+        "@deepseek-ai/dsh-experimental-inspector-profile",
+        "@local/diagnosis-wizard",
+        "@local/dsh-ysr-bridge",
+        "dsh-worktable",
+        "dsh-workbuddy-connect",
+        "@deepseek-ai/dsh-experimental-badge-skill-bundle",
+        "@deepseek-ai/dsh-experimental-tool-worktree",
+        "@deepseek-ai/dsh-experimental-session-search",
+        "@deepseek-ai/dsh-experimental-cot-translation-bundle",
+        "@deepseek-ai/dsh-experimental-plugin-market-bundle",
+        "@deepseek-ai/dsh-experimental-ralph-bundle"
       ],
       "patchReload": "live"
     }
