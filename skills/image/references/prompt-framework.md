@@ -2,7 +2,7 @@
 
 Универсальный чеклист для построения промпта. Применим к **обеим** семьям моделей. Для отличий смотри:
 - [nano-banana.md](nano-banana.md) — NB-специфика (grounding, extreme ratios, thinking mode, JSON)
-- [gpt-image.md](gpt-image.md) — GPT Image 2 (5-slot template, anti-slop, quality settings)
+- [gpt-image.md](gpt-image.md) — GPT Image 2.5 (5-slot template, anti-slop, quality settings)
 - [models.md](models.md) — какую модель когда выбрать
 
 ## Task Types (Навыки)
@@ -41,7 +41,7 @@
 
 > ⚠️ **Параметры объектива** (50mm, 85mm, f/2.8, ISO):
 > - **Nano Banana** — игнорит числа, пиши описательно («shallow depth of field»)
-> - **GPT Image 2** — допускает «50mm feel» как high-level look, но не как точную физическую симуляцию
+> - **GPT Image 2.5** — допускает «50mm feel» как high-level look, но не как точную физическую симуляцию
 
 ## Detail Modes (Режимы)
 

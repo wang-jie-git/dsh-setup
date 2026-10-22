@@ -1,6 +1,6 @@
 # Poster & Illustration Patterns
 
-Reusable prompt templates for posters, art prints, campaign collages, and graphic illustrations. Each pattern uses `{variables}` for customization. Default model: GPT Image 2 (5-slot format) unless noted.
+Reusable prompt templates for posters, art prints, campaign collages, and graphic illustrations. Each pattern uses `{variables}` for customization. Default model: GPT Image 2.5 (5-slot format) unless noted.
 
 ---
 
@@ -56,7 +56,7 @@ Constraints: same athlete across all panels (consistent identity, gear, wraps), 
 
 **Key levers:** `{athlete_description}`, `{gym_environment}` (industrial boxing gym with heavy bags, outdoor concrete training yard, dimly lit basement ring), `{atmosphere_detail}` (chalk dust in backlight, steam from breath in cold air, golden light through high windows), `{action_type}` (throwing a cross, landing a hook on a heavy bag, rope-skipping), `{action_detail}` (fist connecting with bag creating visible impact ripple, rope frozen in arc above head), `{gear_description}` (red hand wraps, worn leather gloves, no gloves — taped knuckles), `{expression}` (focused intensity, controlled exhale, battle cry), `{detail_subject}` (taped knuckles against red canvas, worn boxing boot laces, sweat dripping from chin onto canvas), `{detail_description}` (each tape fiber visible, leather cracking at flex points, individual droplets mid-fall), `{color_treatment}` (desaturated with warm midtones, high-contrast monochrome with sepia, teal-and-orange split tone), `{canvas_color}` (matte black #0D0D0D, dark charcoal #1A1A1A), `{divider_style}` (thin white 2px, no dividers — edge bleed)
 
-**Recommended model:** GPT Image 2 — identity consistency across panels and sweat/texture detail
+**Recommended model:** GPT Image 2.5 — identity consistency across panels and sweat/texture detail
 
 ---
 
@@ -79,7 +79,7 @@ Quality: high
 
 **Key levers:** `{device_name}`, `{color_light}` / `{color_dark}` (lavender #E6D5F5 to #7B4FA0, mint #D0F0E0 to #1B7A5A, coral #FFDDD2 to #C44536), `{device_finish}` (matte aluminum, polished titanium, frosted glass back), `{screen_content}` (a clean home screen with app icons, a camera app showing a landscape, a gradient wallpaper), `{accent_shapes}` (spheres, rounded pills, soft cubes, torus rings), `{accent_shape_color}` — same family as background but slightly lighter or more saturated, `{accent_size}` (golf-ball to grapefruit), `{HEADLINE}` / `{SUBHEADLINE}`, `{headline_color}` (white #FFFFFF, dark tint of the color family), `{color_family}` (lavender-purple, sage-green, warm terracotta), `{tilt_angle}` (5-15), `{horizontal_position}` (left third, center, right third)
 
-**Recommended model:** GPT Image 2 (`quality: high`) — text rendering, screen content legibility, device accuracy
+**Recommended model:** GPT Image 2.5 (`quality: high`) — text rendering, screen content legibility, device accuracy
 
 ---
 
@@ -100,7 +100,7 @@ Quality: high
 
 **Key levers:** `{background_color}` (emerald #006B3F, cobalt #0047AB, saffron #F4C430, hot pink #FF1493), `{model_description}`, `{outfit_description}` (oversized leather trench + chunky sneakers, cropped bomber + wide-leg trousers + platform boots), `{pose_description}` (wide stance with arms crossed, one hand adjusting collar, walking stride caught mid-step), `{MAIN_TITLE}` / `{SUBTITLE}`, `{title_font_style}` (geometric sans-serif, grotesque, stencil cut), `{title_color}` (#FFFFFF, #000000, cream #FFF5E1), `{subtitle_color}` (same as title but at 60% opacity), `{fabric_details}` (visible grain in leather, corduroy ridges, denim selvedge edge), `{graphic_accents}` (none, thin white border 20px from edge, small logo mark at bottom-left)
 
-**Recommended model:** GPT Image 2 (`quality: high`) — typography rendering and figure-type layering
+**Recommended model:** GPT Image 2.5 (`quality: high`) — typography rendering and figure-type layering
 
 ---
 
@@ -121,6 +121,53 @@ A symmetrical ornamental art print centered on a {peacock_variant} peacock in fu
 ```
 A symmetrical ornamental art print centered on a {peacock_variant} peacock in full tail display, viewed {view_angle}. Tail feathers fan into a perfect semicircle filling the upper two-thirds, each eye-spot rendered with iridescent {eye_colors} and fine barb texture. The peacock stands on a {base_element}. Flanking it symmetrically: {botanical_left} on the left mirrored by {botanical_right} on the right, stems and blossoms curving inward to frame the bird. {additional_fauna} near the upper corners. Background: {background_texture} in {background_color}. Style: {print_style} with visible {technique_marks} and slightly flattened color as from layered printing passes. Border: {border_style}. Palette: {palette}. Format: 3:4.
 ```
+
+---
+
+## Torn-Paper Evidence Collage Poster
+
+Use for launches, announcements, gig and exhibition posters, founder or team features — anything that should read as a physical artifact pinned to a board rather than a designed page. The paper layers are the structure, not a decorative frame.
+
+<!-- Source concept: layered torn-paper editorial collage — evidence-board energy with stamps, tape and cutout subject -->
+
+```
+Scene: layered torn-paper collage poster about {theme} — overlapping ripped sheets built up in physical layers: newsprint fragments, cream paper slabs with visible fiber at the tears, one torn black field, archive scraps relevant to {theme}, each layer casting a small hard drop shadow
+Subject: {subject} as a cut-out breaking through the paper layers — the silhouette is scissor-cut, edges slightly ragged, the figure sits between sheets rather than inside a rectangular photo window
+Important Details: {accent_color} tape strips holding layers down at crooked angles, date stamps and ID labels pressed into the paper, barcode strip, safety pin through one corner, halftone dots and photocopy grain across the printed fragments, ink splashes and scuffs, handwriting in the margins, "{HEADLINE}" set enormous in {headline_style} breaking across two paper layers, "{DATA_LINE}" on a small legible sticker card
+Use Case: {use_case}
+Constraints: torn paper must dominate structurally — not a thin decorative border around clean cards, subject must not sit in a clean rectangular frame, keep the headline and data fully legible at thumbnail size, no invented logos, no invented dates or statistics beyond {DATA_LINE}, no watermark, keep the overall poster mid-bright and tactile rather than dark and severe
+Quality: high
+```
+
+**Key levers:** `{theme}` (product launch, exhibition opening, tour date, milestone, team portrait), `{subject}` (person, group, product, vehicle, landmark — or "no figure, object only"), `{accent_color}` (editorial red #D62828, electric lime #B6D900, cyan #00A7E1, hot pink #FF2E88 — pick one, plus black ink), `{headline_style}` (extra-bold condensed grotesque, stencil cut, worn wood-type), `{HEADLINE}`, `{DATA_LINE}` (date, venue, edition number — only what the user actually supplied), `{use_case}` (campaign poster, cover art, collectible print)
+
+**Recommended model:** GPT Image 2.5 (`quality: high`) — layered typography plus small legible label text
+
+---
+
+## Style DNA + Reject Checklist
+
+Reusable working method for any strong visual style, not only the one above. Our patterns end at the prompt; this is what happens after the image comes back. Without it, the usual failure is quiet: the model returns a tidy, corporate version of the style and it passes because nobody wrote down what "wrong" looks like.
+
+Before generating, fix the **Style DNA** in four lines:
+
+1. **Core look** — the one sentence that says what the piece must feel like as an object ("collectible evidence pinned to a board", not "a modern collage poster").
+2. **Material language** — the specific physical ingredients, listed densely. Whatever carries the style: torn edges and tape, or risograph misregistration, or letterpress bite, or airbrush gradients.
+3. **Structural rule** — what the material is allowed to do. Usually the line between a real style and a costume version of it: "paper layers are the composition" vs "paper is a border effect".
+4. **Color direction** — a default plus one or two named alternatives, each tied to a mood the user might ask for.
+
+After generating, run the **Reject Checklist**. Reject and re-prompt naming the specific failure — do not accept and patch. Generic entries that apply to almost any style:
+
+- The style has been reduced to a decorative border around an otherwise clean layout.
+- The result looks like a generic template for the format (event flyer, certificate, dashboard, presentation page).
+- The subject sits in a clean rectangular frame when the style calls for it to be embedded.
+- The hero text or key data is hidden in unreadable microtext.
+- The model invented facts — logos, sponsor marks, dates, statistics, quotes, provenance — that the brief did not contain.
+- A supplied person became a different person.
+- The mood drifted from the brief (usually darker and more severe than requested, because contrast reads as quality to the model).
+- The texture is applied as a flat overlay filter instead of belonging to the materials.
+
+Write the style-specific entries alongside these — they are the ones that actually catch failures. One line per way this particular style is usually faked.
 
 ---
 

@@ -1,62 +1,95 @@
-# Article Posting (API 草稿箱)
+# Article Posting (文章发表)
 
-Publish articles to WeChat Official Account **Draft Box (草稿箱)** via Official API.
-
-Supports:
-- Markdown (.md)
-- HTML (.html)
-- Plain text (save to markdown first, then publish)
+Post markdown articles to WeChat Official Account with full formatting support.
 
 ## Usage
 
 ```bash
-# Publish markdown to draft
-${BUN_X} ./scripts/wechat-api.ts article.md --theme default
+# Post markdown article
+${BUN_X} ./scripts/wechat-article.ts --markdown article.md
 
-# With theme and color
-${BUN_X} ./scripts/wechat-api.ts article.md --theme grace --color purple
+# With theme
+${BUN_X} ./scripts/wechat-article.ts --markdown article.md --theme grace
 
-# Disable bottom citations for ordinary external links (markdown only)
-${BUN_X} ./scripts/wechat-api.ts article.md --theme default --no-cite
+# Disable bottom citations for ordinary external links
+${BUN_X} ./scripts/wechat-article.ts --markdown article.md --no-cite
 
-# HTML input
-${BUN_X} ./scripts/wechat-api.ts article.html --title "标题"
-
-# Photo album style draft (newspic)
-${BUN_X} ./scripts/wechat-api.ts article.md --type newspic --theme default
-
-# Dry run (render & parse only)
-${BUN_X} ./scripts/wechat-api.ts article.md --theme default --dry-run
+# With explicit options
+${BUN_X} ./scripts/wechat-article.ts --markdown article.md --author "作者名" --summary "摘要"
 ```
 
 ## Parameters
 
 | Parameter | Description |
 |-----------|-------------|
-| `<file>` | Markdown (.md) or HTML (.html) |
-| `--type <news|newspic>` | Draft article type (default: news) |
-| `--theme <name>` | Theme: default, grace, simple, modern (required) |
-| `--color <preset|hex>` | Primary color preset or hex |
-| `--title <text>` | Override title |
-| `--author <name>` | Override author |
-| `--summary <text>` | Override summary/digest |
-| `--cover <path|url>` | Cover image (recommended; required for `news` if content has no image) |
-| `--no-cite` | Keep ordinary external links inline (markdown only) |
-| `--dry-run` | Parse and render only; do not publish |
+| `--markdown <path>` | Markdown file to convert and post |
+| `--theme <name>` | Theme: default, grace, simple, modern |
+| `--no-cite` | Keep ordinary external links inline instead of converting them to bottom citations |
+| `--title <text>` | Override title (auto-extracted from markdown) |
+| `--author <name>` | Author name |
+| `--summary <text>` | Article summary |
+| `--html <path>` | Pre-rendered HTML file (alternative to markdown) |
+| `--profile <dir>` | Chrome profile directory |
 
-## Markdown Notes
+## Markdown Format
 
-- Markdown is rendered to WeChat-friendly HTML using the theme renderer.
-- Ordinary external links are converted to bottom citations by default.
-- Inline images are uploaded to WeChat material store and rewritten to WeChat-hosted URLs.
+```markdown
+---
+title: Article Title
+author: Author Name
+---
 
-## API Credentials
+# Title (becomes article title)
 
-The script reads credentials in priority order:
-1. Environment variables: `WECHAT_APP_ID`, `WECHAT_APP_SECRET`
-2. `baoyu-post-to-wechat/.env` (skill root)
+Regular paragraph with **bold** and *italic*.
 
-## Result
+## Section Header
 
-On success, the script prints a JSON payload containing `media_id`. Manage drafts in:
-`https://mp.weixin.qq.com` → 内容管理 → 草稿箱
+![Image description](./image.png)
+
+- List item 1
+- List item 2
+
+> Blockquote text
+
+[Link text](https://example.com)
+```
+
+Markdown mode converts ordinary external links into bottom citations by default for WeChat-friendly output. Use `--no-cite` to disable that behavior.
+
+## Image Handling
+
+1. **Parse**: Images in markdown are replaced with `WECHATIMGPH_N`
+2. **Render**: HTML is generated with placeholders in text
+3. **Paste**: HTML content is pasted into WeChat editor
+4. **Replace**: For each placeholder:
+   - Find and select the placeholder text
+   - Scroll into view
+   - Press Backspace to delete the placeholder
+   - Paste the image from clipboard
+
+## Scripts
+
+| Script | Purpose |
+|--------|---------|
+| `wechat-article.ts` | Main article publishing script |
+| `md-to-wechat.ts` | Markdown to HTML with placeholders |
+| `md/render.ts` | Markdown rendering with themes |
+
+## Example Session
+
+```
+User: /post-to-wechat --markdown ./article.md
+
+Claude:
+1. Parses markdown, finds 5 images
+2. Generates HTML with placeholders
+3. Opens Chrome, navigates to WeChat editor
+4. Pastes HTML content
+5. For each image:
+   - Selects WECHATIMGPH_1
+   - Scrolls into view
+   - Presses Backspace to delete
+   - Pastes image
+6. Reports: "Article composed with 5 images."
+```

@@ -199,6 +199,8 @@ For a 60-90 second piece, a reliable beat map.
 
 Adjust for 30s or 15s by compressing proportionally. Never skip the Crack or the Impact.
 
+This map assumes the story has a causal spine. If the shape of the story is not settled yet — a turn without an opponent, a single culminating moment, a deliberately open ending — choose the arc first in `patterns-and-genres.md` §4, then come back and lay the beats on it.
+
 ### Layer 2. Shot functions
 
 Tag every shot with a function. Same taxonomy as in role-modes.md, expanded with Power.

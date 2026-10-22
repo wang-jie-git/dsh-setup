@@ -1,6 +1,6 @@
 # Portrait & Cinema Patterns
 
-Reusable prompt templates for cinematic portraits, atmospheric character photography, and mood-driven portraiture. Each pattern uses `{variables}` for customization. Default model: GPT Image 2 (5-slot format) unless noted.
+Reusable prompt templates for cinematic portraits, atmospheric character photography, and mood-driven portraiture. Each pattern uses `{variables}` for customization. Default model: GPT Image 2.5 (5-slot format) unless noted.
 
 ---
 
@@ -20,7 +20,7 @@ Constraints: face must be visible and well-exposed despite backlight (not silhou
 
 **Key levers:** `{street_description}` (narrow European alley with stone walls, wide boulevard with linden trees, industrial backstreet with brick), `{person_description}`, `{expression}` (quiet confidence, mid-smile with closed lips, contemplative gaze), `{bounce_surface}` (cream-painted wall, parked white van, sand-colored buildings), `{clothing_detail}` (linen shirt collar, leather jacket shoulder seam, scarf edge), `{ground_surface}` (wet cobblestones, dry asphalt, packed earth), `{color_grade}` (Kodak Portra 400 warmth, slightly lifted blacks with amber cast, clean digital with warm white balance)
 
-**Recommended model:** GPT Image 2 — backlight exposure control and skin rendering
+**Recommended model:** GPT Image 2.5 — backlight exposure control and skin rendering
 
 ---
 
@@ -40,7 +40,7 @@ Constraints: face clearly visible — neither light source blows out features, n
 
 **Key levers:** `{store_type}` (Korean convenience store, bodega, late-night pharmacy, 24-hour laundromat), `{fluorescent_color}` (cool blue-white, greenish-white, warm tungsten), `{neon_sign_description}` (red "OPEN" sign, blue beer brand logo, pink cursive word), `{neon_color}` (red #FF2D2D, blue #3366FF, pink #FF69B4, green #39FF14), `{person_description}`, `{pose_description}` (leaning against door frame, sitting on overturned crate, standing with hands in pockets), `{clothing_description}` (dark hoodie that absorbs light, white t-shirt that bounces both colors, leather that reflects), `{camera_feel}` (Cinestill 800T with halation around neon, clean digital night, Fujifilm color science)
 
-**Recommended model:** GPT Image 2 (`quality: high`) — precise dual-light color rendering on skin
+**Recommended model:** GPT Image 2.5 (`quality: high`) — precise dual-light color rendering on skin
 
 ---
 
@@ -60,7 +60,7 @@ Constraints: glitch lines must look digital (clean horizontal displacement, not 
 
 **Key levers:** `{person_description}`, `{direction}` (left, right), `{hair_detail}` (tight buzz cut showing skull contour, shoulder-length hair with flyaway strands catching backlight, pulled-back bun), `{glitch_positions}` (across the eye, across the mouth, across the forehead — specify 2-3 positions), `{accent_color}` (#FF0000 red, #00FF41 terminal green, #FF00FF magenta), `{max_glitch_lines}` (3-5)
 
-**Recommended model:** GPT Image 2 — high-contrast mono rendering and controlled glitch placement
+**Recommended model:** GPT Image 2.5 — high-contrast mono rendering and controlled glitch placement
 
 ---
 

@@ -1,6 +1,6 @@
 # Fashion Editorial Patterns
 
-Reusable prompt templates for fashion campaigns, lookbooks, and editorial shoots. Each pattern uses `{variables}` for customization. Default model: GPT Image 2 (5-slot format) unless noted.
+Reusable prompt templates for fashion campaigns, lookbooks, and editorial shoots. Each pattern uses `{variables}` for customization. Default model: GPT Image 2.5 (5-slot format) unless noted.
 
 ---
 
@@ -24,7 +24,7 @@ Constraints: same person with identical features in all three panels, no text, n
 
 **Key levers:** `{model_description}` (East Asian woman mid-20s, athletic man early 30s), `{outfit_description}`, `{detail_focus}` (collar construction, cuff button, belt buckle, shoe sole), `{fabric_type}` (raw selvedge denim, double-faced cashmere, washed silk), `{background_1}` (concrete wall, sand dune, industrial corridor), `{background_2}` (open street, field, rooftop), `{color_grade}` (lifted blacks with amber cast, desaturated teal), `{color_temperature}` (warm 4000K feel, cool overcast daylight)
 
-**Recommended model:** GPT Image 2 (`quality: high`) — identity consistency across panels and fabric texture detail
+**Recommended model:** GPT Image 2.5 (`quality: high`) — identity consistency across panels and fabric texture detail
 
 ---
 
@@ -49,7 +49,7 @@ Constraints: identical person in all four frames (bone structure, skin, hair mus
 
 **Key levers:** `{model_description}`, `{outfit_description}` (black turtleneck, white linen shirt unbuttoned at collar), `{background_type}` (seamless medium gray, textured plaster wall, out-of-focus greenery), `{divider_color}` (#FFFFFF, #E0E0E0), `{film_stock}` (Kodak Portra 400, Fujifilm Pro 400H), `{skin_tone_handling}` (warm undertones preserved, cool-neutral rendering), `{accessory}` (earring, collar, watch)
 
-**Recommended model:** GPT Image 2 (`quality: high`) — identity consistency critical across four frames
+**Recommended model:** GPT Image 2.5 (`quality: high`) — identity consistency critical across four frames
 
 ---
 
@@ -70,7 +70,7 @@ Quality: high
 
 **Key levers:** `{HEADLINE_TEXT}` (brand name, drop name), `{SUBHEAD_TEXT}` (date, "LIMITED DROP", collection name), `{background_color}` (off-white #F5F1EB, concrete gray #8C8C8C, matte black #0D0D0D), `{text_color}` (#000000, #FF3333, #FFFFFF), `{font_style}` (sans-serif like Druk Wide, slab-serif, stencil), `{streetwear_outfit}`, `{model_position}` (center-left, right third), `{lighting_type}` (harsh direct flash, soft window light), `{grain_intensity}` (subtle film grain, heavy 35mm grain)
 
-**Recommended model:** GPT Image 2 (`quality: high`) — text rendering and model-type depth interplay
+**Recommended model:** GPT Image 2.5 (`quality: high`) — text rendering and model-type depth interplay
 
 ---
 

@@ -3,7 +3,7 @@
 Универсальные паттерны. Логика edit'а различается по моделям:
 
 - **Nano Banana:** conversational, без масок. «Keep X same, change Y». Хорошо понимает физику и материалы.
-- **GPT Image 2:** двухколоночная логика **Change / Preserve / Constraints**. Preserve list повторять каждую итерацию, иначе drift. Опционально `mask_image_url` для точечных edit'ов. Лучшая identity preservation. См. [gpt-image.md](gpt-image.md#editing--двухколоночная-логика).
+- **GPT Image 2.5:** двухколоночная логика **Change / Preserve / Constraints**. Preserve list повторять каждую итерацию, иначе drift. Опционально `mask_image_url` для точечных edit'ов. Лучшая identity preservation. См. [gpt-image.md](gpt-image.md#editing--двухколоночная-логика).
 
 Общее правило: **один edit за итерацию**, не пытайся менять всё разом.
 

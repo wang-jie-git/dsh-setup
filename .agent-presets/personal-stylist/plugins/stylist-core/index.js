@@ -13,9 +13,16 @@
 //     stylist_photo_metrics  —— 客观皮肤色度量（python/PIL → LAB/底色/色季初判/质量告警）
 //     stylist_profile_apply  —— 视觉判读结果回填档案（置信度标注 + analysis 审计块）
 //   管理/迁移层（v1.5）：
-     // stylist_index_rebuild   —— 档案总览索引 + NocoBase 迁移清单（data/index.json）
-     // stylist_customer_archive —— 顾客软删除/恢复/筛选（archived 标记 + filter）
-     // stylist_card_manage     —— 决策卡 list/delete/preview（含桌面副本同步清理）
+//     stylist_index_rebuild   —— 档案总览索引 + NocoBase 迁移清单（data/index.json）
+//     stylist_customer_archive —— 顾客软删除/恢复/筛选（archived 标记 + filter）
+//     stylist_card_manage     —— 决策卡 list/delete/preview（含桌面副本同步清理）
+//     stylist_customer_edit   —— 顾客档案通用字段编辑（2026-10-22 新增，第 15b 工具）
+//         · 支持任意字段写入/清空（basic_info / body / style / life / privacy / nickname / contact）
+//         · 硬保护：history 绝不可覆盖；customer_id / spec_version / created_at 禁改
+//         · 每次改动写 analysis.edit_log 审计（字段 + 旧值→新值 + 时间 + actor + reason）
+//         · 身高变更按 §1.3 自动复核骨架档（>168 大 / 158-168 普通 / <158 小）
+//         · 说明：stylist_profile_apply 只处理视觉字段（body/skin_tone），不覆盖 basic_info；
+//           补采建档五件套中的年龄/职业/名字/联系方式等走 stylist_customer_edit
 //
 // 数据契约（单一事实源）：
 //   服装档案：/Users/mac/Desktop/宋式美学智能体/golden-dataset/garments/<item_id>.json（CAO 写，Stylist 读）
@@ -753,13 +760,24 @@ export function apply(ctx) {
       }
       const quickScenes = scenes.map((s) => ({ scene: s, strategy: sceneMap[s] || `因地制宜：${stylePrimary}策略，配色限定 ${safeZone}` })).slice(0, 3)
 
-      // ── 落盘：一客一卡，版本递增，历史不覆盖 ──
+      // ── 落盘：诊断未变则复用已有卡，变了才新建（2026-10-22 修复重复出卡）──
       const date = new Date()
       const stamp = `${date.getFullYear()}${String(date.getMonth() + 1).padStart(2, '0')}${String(date.getDate()).padStart(2, '0')}`
       const dir = join(CARDS, args.customer_id)
       mkdirSync(dir, { recursive: true })
-      const existing = existsSync(dir) ? readdirSync(dir).filter((x) => x.startsWith(`CARD-${stamp}-`)).length : 0
-      const card_id = `CARD-${stamp}-${String(existing + 1).padStart(3, '0')}`
+      // 诊断指纹：诊断ID + 诊断更新时间 + 场合侧重。三者都未变 → 卡内容必然相同，直接复用
+      const diagFp = `${gs ? gs.diagnosis_id : 'archive'}|${gs ? (gs.updated_at || gs.issued_at || '') : ''}|${args.occasion_focus || ''}`
+      let reused = null
+      if (existsSync(dir)) {
+        for (const f of readdirSync(dir).filter((x) => x.startsWith('CARD-') && x.endsWith('.md')).sort().reverse()) {
+          try {
+            const txt = readFileSync(join(dir, f), 'utf-8')
+            const m = txt.match(/^> 诊断指纹：(.+)$/m)
+            if (m && m[1].trim() === diagFp) { reused = { card_id: f.replace(/\.md$/, ''), md: txt, path: join(dir, f) }; break }
+          } catch { /* 跳过读不了的文件 */ }
+        }
+      }
+      const card_id = reused ? reused.card_id : `CARD-${stamp}-${String((existsSync(dir) ? readdirSync(dir).filter((x) => x.startsWith(`CARD-${stamp}-`)).length : 0) + 1).padStart(3, '0')}`
 
       const md = [
         `# 口袋决策卡 · ${args.customer_id}`,
@@ -785,12 +803,13 @@ export function apply(ctx) {
         ...review.map((r) => `- ${r}`),
         ``,
         `---`,
+        `> 诊断指纹：${diagFp}`,
         `出卡依据：诊断 ${(gs ? gs.diagnosis_id : '档案 confirmed')} · 色季 ${skin.color_season || '—'} · 6型 ${cs.primary_type || '—'}${cs.secondary_type ? '+' + cs.secondary_type : ''} · 线条 ${line} · 骨架 ${body.skeleton || '—'} · 风格 ${style.style_type?.primary || '—'}${args.occasion_focus ? ` · 场合侧重 ${args.occasion_focus}` : ''}`,
         `（决策卡 v1.5 · 数据源唯一：confirmed 诊断/档案 · 压缩投影不新判定 · 原书锚点 ch04 场合×风格 + ch05/ch07）`,
       ].join('\n')
 
-      const mdPath = join(dir, `${card_id}.md`)
-      writeFileSync(mdPath, md, 'utf-8')
+      const mdPath = reused ? reused.path : join(dir, `${card_id}.md`)
+      if (!reused) writeFileSync(mdPath, md, 'utf-8')
       let desktop_path = null
       try {
         desktop_path = join(WORKSPACE, '..', `口袋决策卡-${args.customer_id}.md`)
@@ -802,6 +821,7 @@ export function apply(ctx) {
       return {
         ok: true,
         card_id,
+        reused: !!reused,
         customer_id: args.customer_id,
         gate: gate,
         redline,
@@ -892,6 +912,197 @@ export function apply(ctx) {
     }  })
 
   // ── 顾客档案 软删除/恢复/筛选（第 15 工具）──────────────────────────
+  // ── 顾客档案编辑管理（第 15b 工具 · 2026-10-22 新增）───────────────────
+  ctx.tools.register({
+    name: 'stylist_customer_edit',
+    description:
+      '顾客档案通用字段编辑：修改/清空任意已建档字段（basic_info / body / style / life / privacy / ' +
+      'nickname / contact）。用于补采建档五件套、修正误判、更新联系方式等。' +
+      '硬保护：history 绝不覆盖（只经 feedback 追加）；customer_id/spec_version/created_at 禁改。' +
+      '每次改动写入 analysis.edit_log 审计（字段 + 旧值→新值 + 时间）。' +
+      '身高变更会按 §1.3 自动复核骨架档（>168 大 / 158-168 普通 / <158 小）。',
+    parameters: {
+      customer_id: { type: 'string', required: true },
+      updates: {
+        type: 'object',
+        required: true,
+        description:
+          '要写入的字段，支持嵌套路径。例：{ "basic_info.age_range": "30-35", ' +
+          '"body.height_cm": 156, "nickname": "大倩", "contact": "138****" }。' +
+          '也支持对象形式 { basic_info: { age_range: "30-35" }, body: { height_cm: 156 } }。',
+      },
+      unset: {
+        type: 'array',
+        description: '要清空的字段路径数组，例：["body.height_weight_ratio", "style.taboo"]',
+      },
+      reason: { type: 'string', description: '改动原因（写入审计，便于追溯；如"顾客补采""修正骨架误判"）' },
+      actor: { type: 'string', description: '改动者标识（默认 stylist；可填店员名/会话来源）' },
+    },
+    output: jsonRender(),
+    async execute(args) {
+      const file = join(CUSTOMERS, `${args.customer_id}.json`)
+      const customer = readJson(file)
+      if (!customer) return { ok: false, error: `顾客 ${args.customer_id} 不存在。` }
+
+      // ── 禁改白名单 ──
+      const FORBIDDEN = ['customer_id', 'spec_version', 'created_at']
+      // history 只可由 feedback 流程追加，禁止整体覆盖
+      const isHistoryPath = (p) => p === 'history' || p.startsWith('history.')
+
+      const flatten = (obj, prefix = '') => {
+        const out = {}
+        for (const [k, v] of Object.entries(obj || {})) {
+          const key = prefix ? `${prefix}.${k}` : k
+          if (v && typeof v === 'object' && !Array.isArray(v)) Object.assign(out, flatten(v, key))
+          else out[key] = v
+        }
+        return out
+      }
+
+      const setPath = (obj, path, value) => {
+        const parts = path.split('.')
+        let cur = obj
+        for (let i = 0; i < parts.length - 1; i++) {
+          if (!cur[parts[i]] || typeof cur[parts[i]] !== 'object') cur[parts[i]] = {}
+          cur = cur[parts[i]]
+        }
+        cur[parts[parts.length - 1]] = value
+      }
+      const getPath = (obj, path) => {
+        return path.split('.').reduce((o, k) => (o == null ? undefined : o[k]), obj)
+      }
+      const delPath = (obj, path) => {
+        const parts = path.split('.')
+        let cur = obj
+        for (let i = 0; i < parts.length - 1; i++) {
+          if (!cur[parts[i]]) return false
+          cur = cur[parts[i]]
+        }
+        if (!(parts[parts.length - 1] in cur)) return false
+        delete cur[parts[parts.length - 1]]
+        return true
+      }
+
+      const changed = []
+      const rejected = []
+      const nowIso = new Date().toISOString()
+
+      // ── 参数归一化（关键修复 2026-10-22）──
+      // MCP 层可能将 object 参数序列化为 JSON 字符串传入。若直接遍历字符串会被逐字符展开，
+      // 导致把 '0','1','2'... 等数字键写入档案（真实事故：C-1007 被写入 59 个垃圾字段）。
+      // 必须先归一化：字符串 → JSON.parse；解析失败则明确报错，绝不静默降级为逐字符写入。
+      const normalizeObject = (v, label) => {
+        if (v == null) return {}
+        if (typeof v === 'object' && !Array.isArray(v)) return v
+        if (typeof v === 'string') {
+          const s = v.trim()
+          if (!s) return {}
+          try {
+            const parsed = JSON.parse(s)
+            if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) return parsed
+            return { error: `${label} 解析后不是对象（得到 ${Array.isArray(parsed) ? '数组' : typeof parsed}），已拒绝。` }
+          } catch (e) {
+            return { error: `${label} 不是合法 JSON：${s.slice(0, 80)}${s.length > 80 ? '…' : ''}` }
+          }
+        }
+        return { error: `${label} 类型错误（${typeof v}），应为对象。` }
+      }
+
+      const normUpdates = normalizeObject(args.updates, 'updates')
+      if (normUpdates.error) return { ok: false, error: normUpdates.error }
+      const normUnset = Array.isArray(args.unset)
+        ? args.unset
+        : typeof args.unset === 'string' && args.unset.trim()
+          ? (() => { try { const p = JSON.parse(args.unset); return Array.isArray(p) ? p : [args.unset] } catch (e) { return [args.unset] } })()
+          : []
+
+      // ── 写入 ──
+      const flat = flatten(normUpdates)
+      for (const [path, value] of Object.entries(flat)) {
+        if (FORBIDDEN.includes(path) || FORBIDDEN.some((f) => path.startsWith(f + '.'))) {
+          rejected.push({ path, reason: '该字段为系统标识，禁止修改' })
+          continue
+        }
+        if (isHistoryPath(path)) {
+          rejected.push({ path, reason: 'history 只经 feedback 追加，禁止直接改写' })
+          continue
+        }
+        if (value === undefined) continue
+        // 防御：拒绝纯数字索引键（对象被误当作字符串/数组遍历时的特征，防止档案污染）
+        if (/^\d+$/.test(path)) {
+          rejected.push({ path, reason: '非法路径：纯数字索引键（疑似参数被误序列化，已拦截）' })
+          continue
+        }
+        const old = getPath(customer, path)
+        if (JSON.stringify(old) === JSON.stringify(value)) continue // 无变化
+        setPath(customer, path, value)
+        changed.push({ path, from: old === undefined ? null : old, to: value })
+      }
+
+      // ── 清空 ──
+      for (const path of normUnset) {
+        if (FORBIDDEN.includes(path)) { rejected.push({ path, reason: '禁改字段' }); continue }
+        if (isHistoryPath(path)) { rejected.push({ path, reason: 'history 禁止改写' }); continue }
+        const old = getPath(customer, path)
+        if (old === undefined) continue
+        // 顶层字段清空=置 null（保留键，与建档模板 schema 一致）；嵌套字段=删除键
+        if (!path.includes('.')) {
+          customer[path] = null
+          changed.push({ path, from: old, to: null, action: 'unset' })
+        } else if (delPath(customer, path)) {
+          changed.push({ path, from: old, to: null, action: 'unset' })
+        }
+      }
+
+      if (!changed.length) {
+        return {
+          ok: true,
+          changed: [],
+          rejected,
+          note: '无字段发生实际变化（新值与旧值相同，或路径不存在）。',
+          path: file,
+        }
+      }
+
+      // ── 身高联动：按 §1.3 复核骨架档 ──
+      let skeletonNote = null
+      const h = customer.body?.height_cm
+      if (typeof h === 'number' && h > 0) {
+        const skBand = h > 168 ? '大骨架' : h >= 158 ? '普通骨架' : '小骨架'
+        if (customer.body.skeleton !== skBand) {
+          const oldSk = customer.body.skeleton
+          customer.body.skeleton = skBand
+          changed.push({ path: 'body.skeleton', from: oldSk, to: skBand, action: 'auto-recheck' })
+          skeletonNote = `身高 ${h}cm 按 §1.3 中国校准复核：骨架档 ${oldSk || '空'} → ${skBand}（自动联动）`
+        }
+      }
+
+      // ── 审计块 ──
+      customer.updated_at = nowIso
+      if (!customer.analysis) customer.analysis = {}
+      if (!Array.isArray(customer.analysis.edit_log)) customer.analysis.edit_log = []
+      customer.analysis.edit_log.push({
+        at: nowIso,
+        actor: args.actor || 'stylist',
+        reason: args.reason || '（未注明原因）',
+        changes: changed.map((c) => ({ path: c.path, from: c.from, to: c.to, action: c.action || 'set' })),
+      })
+      if (customer.analysis.edit_log.length > 50) customer.analysis.edit_log.shift()
+
+      writeFileSync(file, JSON.stringify(customer, null, 2), 'utf-8')
+      return {
+        ok: true,
+        customer_id: args.customer_id,
+        changed_count: changed.length,
+        changed,
+        rejected,
+        skeleton_note: skeletonNote,
+        edit_log_size: customer.analysis.edit_log.length,
+        path: file,
+      }
+    },
+  })
+
   ctx.tools.register({
     name: 'stylist_customer_archive',
     description:

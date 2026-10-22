@@ -1,6 +1,6 @@
 # UI Mockups & Social Media Patterns
 
-Reusable prompt templates for social media ads, app store assets, dashboard mockups, and visual analysis boards. Each pattern uses `{variables}` for customization. Default model: GPT Image 2 (5-slot format) unless noted.
+Reusable prompt templates for social media ads, app store assets, dashboard mockups, and visual analysis boards. Each pattern uses `{variables}` for customization. Default model: GPT Image 2.5 (5-slot format) unless noted.
 
 ---
 
@@ -20,7 +20,7 @@ Constraints: text must be legible on mobile screens (minimum visual weight), no 
 
 **Key levers:** `{product_name}`, `{product_description}` (shape, material, color), `{gradient_top}` / `{gradient_bottom}` (e.g. #6C3CE1 violet to #1A1A2E dark navy, #FF6B6B coral to #FFE66D warm yellow), `{headline_text}`, `{headline_font}` (bold condensed sans-serif, rounded geometric), `{subtext}`, `{cta_text}` (e.g. "Swipe Up", "Shop Now", "Learn More"), `{accent_elements}` (translucent spheres, soft light flares, floating geometric shards)
 
-**Recommended model:** GPT Image 2 (`quality: high`) — headline text legibility and glassmorphism transparency effects need precision
+**Recommended model:** GPT Image 2.5 (`quality: high`) — headline text legibility and glassmorphism transparency effects need precision
 
 ---
 
@@ -46,7 +46,7 @@ Constraints: all text must remain legible at 320px display width, no decorative 
 
 **Key levers:** `{post_type}` (quote card, product feature, announcement, stat highlight), `{content_description}`, `{primary_text}`, `{primary_font}` (geometric sans-serif, modern serif, handwritten accent), `{text_color}` (#FFFFFF on dark, #1A1A1A on light), `{bg_color}` / `{bg_treatment}`, `{accent_color}`, `{brand_name}`, `{brand_mark}`, `{palette}` (e.g. navy #1B2A4A, gold #C9A84C, white #FFFFFF), `{supporting_element}` (product photo, icon illustration, data number in large type)
 
-**Recommended model:** GPT Image 2 (`quality: high`) — text-heavy layout; legibility at small sizes is critical
+**Recommended model:** GPT Image 2.5 (`quality: high`) — text-heavy layout; legibility at small sizes is critical
 
 ---
 
@@ -72,7 +72,7 @@ Constraints: device bezel must look physically accurate (not a flat rectangle), 
 
 **Key levers:** `{device_type}` (iPhone 16 Pro, Pixel 9, Galaxy S25), `{app_name}`, `{screen_description}` (brief: what the screen shows), `{screen_content}` / `{ui_description}` (detailed: specific UI elements visible), `{ui_style}` (iOS native, Material 3, custom dark theme), `{feature_headline}`, `{headline_font}` (SF Pro Display, condensed geometric), `{headline_position}` (above, below), `{headline_color}`, `{subheadline}`, `{gradient_top}` / `{gradient_bottom}` (e.g. #1A1A2E to #0D0D1A for dark, #F0F4FF to #FFFFFF for light)
 
-**Recommended model:** GPT Image 2 (`quality: high`) — device bezel precision, small UI text, and headline legibility all demand high quality
+**Recommended model:** GPT Image 2.5 (`quality: high`) — device bezel precision, small UI text, and headline legibility all demand high quality
 
 ---
 
@@ -101,7 +101,7 @@ Constraints: data must look plausible (proper scales, reasonable percentages, fo
 
 **Key levers:** `{theme_mode}` (dark / light), `{design_system}` (minimal flat, glassmorphism cards, shadowed Material), `{dashboard_title}`, `{data_domain}` (SaaS revenue, e-commerce orders, marketing campaign, IoT sensor monitoring), `{sidebar_bg}` (#0F1117 dark, #FFFFFF light), `{accent_color}` (#6366F1 indigo, #10B981 emerald, #F59E0B amber), `{nav_items}` (Dashboard, Analytics, Users, Settings, Reports), `{num_kpis}` (3-5), `{chart_1_type}` / `{chart_2_type}` (line chart, grouped bar chart, donut chart, area chart), `{chart_1_colors}` / `{chart_2_colors}` (hex values), `{card_bg}` (#1E1E2E dark card, #FFFFFF light card), `{secondary_widget}`
 
-**Recommended model:** GPT Image 2 (`quality: high`) — dense text (labels, numbers, navigation), precise chart rendering, and small UI elements require high fidelity
+**Recommended model:** GPT Image 2.5 (`quality: high`) — dense text (labels, numbers, navigation), precise chart rendering, and small UI elements require high fidelity
 
 ### Nano Banana version:
 
@@ -132,7 +132,7 @@ Constraints: same person in all panels showing the subject, swatches must be sol
 
 **Key levers:** `{subject_description}` (age, skin tone, hair color, eye color — needed for accurate seasonal analysis), `{season_type}` (Warm Spring, Cool Summer, Warm Autumn, Cool Winter — or sub-seasons like Soft Autumn, Bright Winter), `{palette_colors}` (12 hex values matching the season, e.g. Warm Autumn: rust #B7410E, olive #708238, mustard #E1AD01, burgundy #722F37...), `{num_palette}` (12), `{flattering_color}` / `{unflattering_color}` (specific colors with hex), `{good_label}` / `{bad_label}` (e.g. "Warm Coral" / "Cool Pink"), `{num_recs}` (4-6), `{rec_items}` (scarf in olive, blazer in navy, lipstick in warm rose, eyeglass frames in tortoise)
 
-**Recommended model:** GPT Image 2 (`quality: high`) — color accuracy of palette swatches is critical, plus small text labels throughout
+**Recommended model:** GPT Image 2.5 (`quality: high`) — color accuracy of palette swatches is critical, plus small text labels throughout
 
 ### Nano Banana version:
 

@@ -21,7 +21,7 @@ description: "Reference library of 74 DESIGN.md design-system documents extracte
 2. **读设计**：用 `read_file` 读取目标品牌的 `DESIGN.md`，提取其 `colors:`、`typography:`、`spacing:`、`radii:`、`composition rules` 等令牌。
 3. **应用**：按用户要求生成 UI，严格遵循该品牌的色板、字体分层、间距节奏和圆角规则，保持视觉一致性。
 
-## 品牌索引（74 个）
+## 品牌索引（84 个）
 
 **AI 与 LLM 平台**：claude, cohere, elevenlabs, minimax, mistral, ollama, opencode, replicate, runway, together, voltagent, xai
 
@@ -29,17 +29,19 @@ description: "Reference library of 74 DESIGN.md design-system documents extracte
 
 **后端 / 数据库 / DevOps**：clickhouse, composio, hashicorp, mongodb, posthog, sanity, sentry, supabase
 
-**生产力 / SaaS**：cal, intercom, linear.app, mintlify, notion, resend, zapier
+**生产力 / SaaS**：cal, intercom, jobright, linear.app, mercury, mintlify, notion, resend, zapier
 
 **设计与创意工具**：airtable, clay, figma, framer, miro, webflow
 
-**金融科技 / 加密**：binance, coinbase, kraken, mastercard, revolut, stripe, wise
+**金融科技 / 加密**：binance, coinbase, kraken, mastercard, mydealz, revolut, stripe, wise
 
 **电商 / 零售**：airbnb, meta, nike, shopify, starbucks
 
-**媒体 / 消费电子**：apple, hp, ibm, nvidia, pinterest, playstation, spacex, spotify
+**媒体 / 消费电子**：aljazeera, apple, hp, ibm, nvidia, pinterest, playstation, sap, spacex, spotify
 
 **汽车（其他）**：bmw, bmw-m, bugatti, dell-1996, ferrari, lamborghini
+
+**硬件 / 物联网 / 企业**：1win, dji, nerdwallet, oracle, oura
 
 ## 常见请求的快速映射
 

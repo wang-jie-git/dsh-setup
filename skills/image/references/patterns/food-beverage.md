@@ -1,6 +1,6 @@
 # Food & Beverage Patterns
 
-Reusable prompt templates for food photography, beverage campaigns, and culinary illustration. Each pattern uses `{variables}` for customization. Default model: GPT Image 2 (5-slot format) unless noted.
+Reusable prompt templates for food photography, beverage campaigns, and culinary illustration. Each pattern uses `{variables}` for customization. Default model: GPT Image 2.5 (5-slot format) unless noted.
 
 ---
 
@@ -32,7 +32,7 @@ Mood variant — {mood_name}:
 - `{arrangement_style}` — diagonal cascade, tight cluster with negative space right, single row
 - `{mood_name} / {mood_modifier}` — "Dark Indulgence": push contrast, deepen shadows, add smoke wisp / "Bright Artisan": overcast daylight, lifted blacks, pastel accent / "Origin Story": raw earth tones, burlap texture, raw cacao beans nearby
 
-**Recommended model:** GPT Image 2 (`quality: high`) — fracture detail and cocoa powder precision
+**Recommended model:** GPT Image 2.5 (`quality: high`) — fracture detail and cocoa powder precision
 
 ---
 
@@ -56,7 +56,7 @@ Constraints: model does not look directly at product (natural interaction), prod
 
 **Key levers:** `{product_name}`, `{beverage_brand}`, `{model_description}`, `{location}` (sunlit rooftop bar, marble kitchen counter, poolside), `{hold_position}` (mid-sip, resting at hip, gesturing with it), `{model_action}` (laughing mid-conversation, looking off-frame, walking), `{film_aesthetic}` (warm Kodak Portra feel, clean digital, cold editorial), `{product_angle}` (three-quarter front, straight-on, slight low angle), `{product_surface}` (wet dark stone, frosted glass shelf, white marble), `{lineup_count}` (3-5), `{variant_colors}` (amber/ruby/gold, mint/lemon/berry), `{divider_color}` (#FFFFFF, #1A1A1A)
 
-**Recommended model:** GPT Image 2 (`quality: high`) — label legibility and panel consistency
+**Recommended model:** GPT Image 2.5 (`quality: high`) — label legibility and panel consistency
 
 ---
 
@@ -93,7 +93,7 @@ Constraints: food must look freshly prepared (not cold or sat-out), no human han
 - `{background_treatment}` — dark vignette, clean bright, rustic blur
 - `{camera_angle}` — 45-degree three-quarter, straight-on eye-level, overhead flat-lay
 
-**Recommended model:** GPT Image 2 (`quality: high`) — steam, condensation, and ingredient texture fidelity
+**Recommended model:** GPT Image 2.5 (`quality: high`) — steam, condensation, and ingredient texture fidelity
 
 ---
 

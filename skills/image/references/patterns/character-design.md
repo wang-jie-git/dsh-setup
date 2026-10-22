@@ -1,6 +1,6 @@
 # Character Design Patterns
 
-Reusable prompt templates for character turnarounds, expression sheets, outfit variants, and collectible/card formats. Each pattern uses `{variables}` for customization. Default model: GPT Image 2 (5-slot format) unless noted.
+Reusable prompt templates for character turnarounds, expression sheets, outfit variants, and collectible/card formats. Each pattern uses `{variables}` for customization. Default model: GPT Image 2.5 (5-slot format) unless noted.
 
 ---
 
@@ -20,7 +20,7 @@ Constraints: no background elements, no props in hands, no dramatic poses — ne
 
 **Key levers:** `{character_name}`, `{character_description}` (age, build, hairstyle, outfit — be specific), `{color_1}`/`{hex_1}` through `{color_3}`/`{hex_3}` (key palette colors for callouts, e.g. jacket navy #1B2A4A, skin warm beige #D4A574, hair auburn #8B3A2F)
 
-**Recommended model:** GPT Image 2 (`quality: high`) — height reference lines and color callout text require precise rendering
+**Recommended model:** GPT Image 2.5 (`quality: high`) — height reference lines and color callout text require precise rendering
 
 ---
 
@@ -49,7 +49,7 @@ Constraints: same character identity in every cell — no variation in hair, acc
 
 **Key levers:** `{character_name}`, `{character_description}` (face shape, skin tone, hair, distinguishing marks), `{art_style}` (clean cel-shaded anime, painterly semi-realism, flat vector illustration), `{label_font}` (condensed sans-serif, monospace, rounded sans), `{extra_expressions}` (add cells 7-9: e.g. "Cell 7: smirk — one corner of mouth raised, knowing look. Label: 'SMIRK'")
 
-**Recommended model:** GPT Image 2 (`quality: high`) — text labels and consistent facial identity across 9 cells need precise control
+**Recommended model:** GPT Image 2.5 (`quality: high`) — text labels and consistent facial identity across 9 cells need precise control
 
 ---
 
@@ -77,7 +77,7 @@ Constraints: same character identity and pose in every cell, no background scene
 
 **Key levers:** `{character_name}`, `{character_description}` (build, face, hair — anchor identity), `{bg_color}` (#F0F0F0 light gray, #FFF8F0 warm cream, #E8EDF2 cool blue-gray), `{grid_layout}` (2x3 or 3x3), `{pose_description}` (hands on hips, relaxed standing, one hand raised), `{outfit_N_name}` / `{outfit_N_description}` (e.g. "Street Casual" — oversized denim jacket, white tee, black cargo pants, chunky sneakers)
 
-**Recommended model:** GPT Image 2 (`quality: medium`) — character consistency is the priority; `high` only if outfit labels need fine legibility
+**Recommended model:** GPT Image 2.5 (`quality: medium`) — character consistency is the priority; `high` only if outfit labels need fine legibility
 
 ---
 
@@ -105,7 +105,7 @@ Constraints: consistent face and outfit across all poses, chibi proportions must
 
 **Key levers:** `{character_name}`, `{character_description_simplified}` (key outfit and hair only), `{face_markers}` (e.g. round glasses, scar on left cheek, green eyes), `{color_palette}` (hex values for 2-3 dominant colors), `{bg_gradient}` (#F5F0EB to #FFFFFF warm, #E0E8F0 to #FFFFFF cool), `{num_poses}` (3-5), `{pose_N_description}` (e.g. sitting cross-legged reading a book, waving with both hands, holding a coffee cup), `{base_color}` (white, black, matching character's main color)
 
-**Recommended model:** GPT Image 2 (`quality: medium`) — smooth 3D vinyl surfaces render well at medium; `high` for marketing-ready close-ups
+**Recommended model:** GPT Image 2.5 (`quality: medium`) — smooth 3D vinyl surfaces render well at medium; `high` for marketing-ready close-ups
 
 ### Nano Banana version:
 
@@ -137,7 +137,7 @@ Constraints: unified anime art style across all sections — portrait and full b
 
 **Key levers:** `{character_name}`, `{character_description}` (detailed: hair color/style, eye color, outfit layers, accessories), `{face_details}` (distinctive facial features — e.g. heterochromia, facial tattoo, sharp jawline), `{item_1}`/`{item_2}`/`{item_3}` (signature weapon, accessory, artifact), `{swatch_colors}` (e.g. midnight blue #191970, cherry red #C41E3A, silver #C0C0C0, warm skin #E8B89D), `{num_swatches}` (4-6), `{class}` / `{height}` / `{affiliation}` (stat block fields)
 
-**Recommended model:** GPT Image 2 (`quality: high`) — text-heavy layout with hex codes, labels, and stat block requires precise rendering
+**Recommended model:** GPT Image 2.5 (`quality: high`) — text-heavy layout with hex codes, labels, and stat block requires precise rendering
 
 ### Nano Banana version:
 

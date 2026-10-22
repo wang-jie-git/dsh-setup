@@ -2,6 +2,8 @@
 
 Up to 14 reference images (6 high-fidelity). Identity locking across scenes.
 
+> If the character must read as a real person and the model keeps beautifying them — idealized eyes, poreless skin, model stance — identity locking alone will not hold. Pair this file with [de-slop.md](de-slop.md).
+
 ## Identity Locking
 
 ```

@@ -1,6 +1,6 @@
 # Golden Rules
 
-Универсальные принципы. Работают для **обеих** семей моделей (Nano Banana и GPT Image 2).
+Универсальные принципы. Работают для **обеих** семей моделей (Nano Banana и GPT Image 2.5).
 Для модельной специфики см. [nano-banana.md](nano-banana.md), [gpt-image.md](gpt-image.md).
 
 ## 1. Start with a Verb
@@ -71,12 +71,12 @@ Mood: [Emotional descriptor]
 Format: [ASPECT RATIO]
 ```
 
-> **Thinking Mode** (NB only), **`quality: low/medium/high`** (GPT Image 2 only) — см. соответствующие references.
+> **Thinking Mode** (NB only), **`quality: low/medium/high/xhigh/max`** (GPT Image 2.5 only) — см. соответствующие references.
 
 ## Cost Optimization (Batch Work)
 
 - **Nano Banana:** прогон вариантов на `0.5K` Flash → отбор → переген победителя на `2K`/`4K`.
-- **GPT Image 2:** прогон на `quality: low` → отбор → переген на `medium` или `high`.
+- **GPT Image 2.5:** прогон на `quality: low` → отбор → переген на `medium` или `high`.
 
 В обоих случаях: дешёвая разведка → дорогой финал.
 
@@ -90,7 +90,7 @@ After generation:
 
 ## Reference Images
 
-Multi-image вход: **NB до 14**, **GPT Image 2 до 16**. Индексируй с ролью каждой картинки.
+Multi-image вход: **NB до 14**, **GPT Image 2.5 до 16**. Индексируй с ролью каждой картинки.
 
 Используй для:
 
@@ -133,7 +133,7 @@ Combine: face from Image 1, outfit style from Image 2, setting from Image 3.
 
 ## World Knowledge Anchors
 
-GPT Image 2 обладает глубокими знаниями о культуре, эпохах и визуальных стилях. Вместо описания каждой детали — дай модели культурный/временной/жанровый якорь, и она сама заполнит аутентичные детали.
+GPT Image 2.5 обладает глубокими знаниями о культуре, эпохах и визуальных стилях. Вместо описания каждой детали — дай модели культурный/временной/жанровый якорь, и она сама заполнит аутентичные детали.
 
 ### Три типа якорей
 
@@ -158,7 +158,7 @@ GPT Image 2 обладает глубокими знаниями о культу
 1. **Используй как HIGH-LEVEL steering** — якорь задаёт настроение и эстетику, а не заменяет весь промпт
 2. **Комбинируй с конкретными визуальными деталями** — якорь устанавливает мир, детали устанавливают специфику
 3. **Не стакай несколько genre anchors** — выбери один. "Peter Lindbergh + Wes Anderson" = каша
-4. **Era/cultural anchors работают лучше с GPT Image 2** (world knowledge). С Nano Banana результат менее предсказуем — NB больше опирается на явные описания
+4. **Era/cultural anchors работают лучше с GPT Image 2.5** (world knowledge). С Nano Banana результат менее предсказуем — NB больше опирается на явные описания
 
 ### Примеры
 

@@ -78,9 +78,21 @@ Note: User can choose "Other" to type any preset name (vermilion, yellow, purple
 
 ### Question 3: Default Publishing Method
 
-This skill publishes via Official API only. No publishing-method selection is needed.
+```yaml
+header: "Method"
+question: "Default publishing method?"
+options:
+  - label: "api (Recommended)"
+    description: "Fast, requires API credentials (AppID + AppSecret)"
+  - label: "browser"
+    description: "Slow, requires Chrome and login session"
+  - label: "remote-api"
+    description: "Fast, tunnels WeChat API calls through SSH to a server whose IP is on the WeChat allowlist"
+```
 
-### Question 3: Default Author
+If the user selects `remote-api`, prompt for `remote_publish_host` and (optionally) `remote_publish_user`, `remote_publish_identity_file`. These can also be filled in later by editing EXTEND.md.
+
+### Question 4: Default Author
 
 ```yaml
 header: "Author"
@@ -92,7 +104,7 @@ options:
 
 Note: User will likely choose "Other" to type their author name.
 
-### Question 4: Open Comments
+### Question 5: Open Comments
 
 ```yaml
 header: "Comments"
@@ -104,7 +116,7 @@ options:
     description: "Disable comments by default"
 ```
 
-### Question 5: Fans-Only Comments
+### Question 6: Fans-Only Comments
 
 ```yaml
 header: "Fans only"
@@ -116,24 +128,24 @@ options:
     description: "Only followers can comment"
 ```
 
-### Question 6: Save Location
+### Question 7: Save Location
 
 ```yaml
 header: "Save"
 question: "Where to save preferences?"
 options:
   - label: "Project (Recommended)"
-    description: ".config/ (this project only)"
+    description: ".baoyu-skills/ (this project only)"
   - label: "User"
-    description: "~/.config/ (all projects)"
+    description: "~/.baoyu-skills/ (all projects)"
 ```
 
 ## Save Locations
 
 | Choice | Path | Scope |
 |--------|------|-------|
-| Project | `.config/baoyu-markdown-to-html/EXTEND.md` | Current project |
-| User | `~/.config/baoyu-markdown-to-html/EXTEND.md` | All projects |
+| Project | `.baoyu-skills/baoyu-post-to-wechat/EXTEND.md` | Current project |
+| User | `~/.baoyu-skills/baoyu-post-to-wechat/EXTEND.md` | All projects |
 
 ## After Setup
 
@@ -144,13 +156,68 @@ options:
 
 ## EXTEND.md Template
 
+### Single Account (Default)
+
 ```md
 default_theme: [default/grace/simple/modern]
 default_color: [preset name, hex, or empty for theme default]
+default_publish_method: [api/browser/remote-api]
 default_author: [author name or empty]
 need_open_comment: [1/0]
 only_fans_can_comment: [1/0]
+chrome_profile_path:
+
+# Remote API publishing — only fill in if default_publish_method is remote-api
+# or you plan to pass --remote on the CLI.
+remote_publish_host:
+remote_publish_user:
+remote_publish_port:
+remote_publish_identity_file:
+remote_publish_known_hosts_file:
+remote_publish_strict_host_key_checking:
+remote_publish_connect_timeout:
+remote_publish_proxy_jump:
 ```
+
+Raw `ssh` / `scp` options are intentionally not supported; only the typed keys above are honored. Authentication is SSH key only.
+
+### Multi-Account
+
+```md
+default_theme: [default/grace/simple/modern]
+default_color: [preset name, hex, or empty for theme default]
+
+accounts:
+  - name: [display name]
+    alias: [short key, e.g. "baoyu"]
+    default: true
+    default_publish_method: [api/browser/remote-api]
+    default_author: [author name]
+    need_open_comment: [1/0]
+    only_fans_can_comment: [1/0]
+    app_id: [WeChat App ID, optional]
+    app_secret: [WeChat App Secret, optional]
+    # Remote API publishing (optional, per-account override of globals)
+    remote_publish_host:
+    remote_publish_user:
+    remote_publish_identity_file:
+  - name: [second account name]
+    alias: [short key, e.g. "ai-tools"]
+    default_publish_method: [api/browser/remote-api]
+    default_author: [author name]
+    need_open_comment: [1/0]
+    only_fans_can_comment: [1/0]
+```
+
+## Adding More Accounts Later
+
+After initial setup, users can add accounts by editing EXTEND.md:
+
+1. Add an `accounts:` block with list items
+2. Move per-account settings (author, publish method, comments) into each account entry
+3. Keep global settings (theme, color) at the top level
+4. Each account needs a unique `alias` (used for CLI `--account` arg and Chrome profile naming)
+5. Set `default: true` on the primary account
 
 ## Modifying Preferences Later
 

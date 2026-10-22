@@ -5,6 +5,7 @@
 1. Montage patterns (6 ready structures)
 2. Genre modules (7 archetypes)
 3. Multi-clip story structure
+4. Choosing the story arc (read first when the shape of the story is not yet decided)
 
 ---
 
@@ -188,6 +189,63 @@ Use timecoded structure for Seedance and Veo. Kling prefers flowing prose.
 When moving from clip N to clip N+1, the first beat of the new clip should match the final beat of the previous clip. Character in same pose. Same light. Same color temperature. This is what makes them cut together cleanly in the editor.
 
 Example. Clip 1 ends on him reaching into the fridge. Clip 2 opens on his hand inside the fridge at the same height and light.
+
+---
+
+## 4. Choosing the story arc
+
+The montage patterns in §1 shape *how* a sequence cuts. This section decides *what shape the story has* before any of that. Pick the arc first, then the pattern, then the beat map from `dramaturgy.md` §10.
+
+Five arcs cover almost everything short-form asks for. Each entry names what it is for and — more usefully — what it breaks on. Forcing the wrong arc is the most common reason a spot feels busy but empty.
+
+### Arc 1. Causal chain
+
+- **Shape.** Ordinary state → the thing that disrupts it → consequence → consequence → resolution.
+- **Use when.** There is an external goal and each beat is caused by the previous one. Quests, journeys, a task pursued to its end, partner-and-partner stories.
+- **Signals in the brief.** Someone is looking for / going to / delivering / rescuing. A destination or objective is stated outright.
+- **Does not fit.** A single moment with no progression. A story that lives on a reveal rather than on cause and effect. A contemplative scene with nothing being pursued.
+
+### Arc 2. Turn without conflict (kishotenketsu)
+
+- **Shape.** Setup → widening → an unrelated element turns the meaning → the two halves reconcile.
+- **Use when.** Nothing opposes the hero and nothing needs to. The power is in a recontextualization: a discovery, a memory, an object that turns out to mean something else.
+- **Signals in the brief.** "It turns out that", a found object, a photograph, a revelation about the past, two strangers who share something. No antagonist anywhere.
+- **Does not fit.** Fights, competition, anything with an opponent to defeat. Goal-driven quests. Problem-then-solution advertising.
+- **Note.** The turn is the Crack in `dramaturgy.md` §10 — it is not optional here either, it is simply not a conflict.
+
+### Arc 3. One peak moment
+
+- **Shape.** Just enough context → the peak → the residue it leaves.
+- **Use when.** The piece captures a single significant instant and lets the audience supply everything around it. Vows, the winning second, the last note, a goodbye.
+- **Signals in the brief.** No "and then". No obstacle. A ceremony, a culmination, a farewell.
+- **Does not fit.** Any story with sequential progression, a battle with an outcome, a search, a problem being solved.
+- **Note.** This is the one arc where the beat map in `dramaturgy.md` §10 collapses: Crack and Impact land on the same beat, and Aftermath carries most of the running time. Do not manufacture a fake obstacle to fill the middle.
+
+### Arc 4. Conflict beat sheet
+
+- **Shape.** Opening image → the thing that starts it → midpoint reversal → lowest point → climax → closing image.
+- **Use when.** Two forces are in direct opposition and the outcome is in doubt. Fights, chases, survival, an obstacle that can genuinely win.
+- **Signals in the brief.** Versus, against, escape, defeat, physical danger, a clock running down.
+- **Does not fit.** Quiet discoveries, non-conflict narratives, a simple linear sequence with no reversal to pay off.
+- **Pairs with.** §1 Pattern 1 (Escalation) and Pattern 4 (Catastrophe).
+
+### Arc 5. Hook and open end
+
+- **Shape.** Hook → a self-contained fragment of story → a question left standing, or a call to act.
+- **Use when.** The piece is episode one, a teaser, or a campaign unit that is meant to continue. Resolution is deliberately withheld.
+- **Signals in the brief.** Series, part one, teaser, "to be continued", a mystery introduced, a product reveal held back.
+- **Does not fit.** A self-contained story. Anything where the client expects closure inside this one film.
+- **Pairs with.** §1 Pattern 5 (Commercial product drama) when the open end is the call to action.
+
+### Fast selection
+
+- Someone fights, races, or escapes → **Arc 4**.
+- Someone searches for or pursues a stated goal → **Arc 1**.
+- Something is discovered and the meaning shifts, with no opponent → **Arc 2**.
+- One ceremony or culmination, nothing before or after → **Arc 3**.
+- It is episode one or the ending is withheld on purpose → **Arc 5**.
+
+If two arcs look equally plausible, the brief is not decided yet — ask which one the client is buying before writing shots. Running two arcs at once produces a film that changes its mind in the middle.
 
 ---
 

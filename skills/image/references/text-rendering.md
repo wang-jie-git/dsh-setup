@@ -3,7 +3,7 @@
 Универсальные стили, layout-типы, примеры. Применимо к обеим моделям, но детали рендера расходятся:
 
 - **Nano Banana:** SOTA по 100+ языкам, multi-language в одном кадре, можно называть конкретные шрифты («Century Gothic 12px», «Brush Script»). См. [nano-banana.md](nano-banana.md).
-- **GPT Image 2:** EXACT TEXT в `"..."` или ALL CAPS, добавляй «no extra words / no duplicate text», для мелкого текста — `quality: high`. См. [gpt-image.md](gpt-image.md).
+- **GPT Image 2.5:** EXACT TEXT в `"..."` или ALL CAPS, добавляй «no extra words / no duplicate text», для мелкого текста — `quality: high`. См. [gpt-image.md](gpt-image.md).
 
 ## Prompt Structure
 

@@ -1,6 +1,6 @@
 # E-Commerce Product Photography Patterns
 
-Reusable prompt templates for product ads, packaging, and commercial visuals. Each pattern uses `{variables}` for customization. Default model: GPT Image 2 (5-slot format) unless noted.
+Reusable prompt templates for product ads, packaging, and commercial visuals. Each pattern uses `{variables}` for customization. Default model: GPT Image 2.5 (5-slot format) unless noted.
 
 ---
 
@@ -20,7 +20,7 @@ Constraints: no text, no logos other than product label, no floating elements, p
 
 **Key levers:** `{product_name}`, `{product_material}` (frosted glass, matte aluminum, glossy plastic), `{surface_color}` (white marble, raw concrete, light birch wood), `{accent_color}` (safety orange #FF6600, yellow #FFD600)
 
-**Recommended model:** GPT Image 2 (`quality: high`) — precise figurine detail and product label legibility
+**Recommended model:** GPT Image 2.5 (`quality: high`) — precise figurine detail and product label legibility
 
 ---
 
@@ -40,7 +40,7 @@ Constraints: no text overlays, no human hands, background stays dark (#0a0a0a to
 
 **Key levers:** `{background_surface}` (nero marquina marble, wet obsidian slab, brushed gunmetal), `{product_finish}` (frosted glass, lacquered black, brushed gold), `{accent_material}` (raw quartz crystals, dried lavender stems, black river stones), `{palette}` (golds #C9A84C and blacks, rose #B76E79 and creams, emerald #2D6A4F and silvers), `{time_mood}` (cold blue, warm amber)
 
-**Recommended model:** GPT Image 2 (`quality: high`) — surface materials and condensation detail
+**Recommended model:** GPT Image 2.5 (`quality: high`) — surface materials and condensation detail
 
 ---
 
@@ -71,7 +71,7 @@ Constraints: consistent character identity across all panels, no panel numbering
 
 **Key levers:** `{product_name}`, `{protagonist}` (woman in her 30s, young couple, family), `{setting}` (bright kitchen, outdoor terrace, urban cafe), `{emotion}` (satisfied, surprised, relaxed), `{beauty_surface}` (white marble, gradient gray), `{tagline}`, `{duration}` (15, 30)
 
-**Recommended model:** GPT Image 2 (`quality: high`) — grid precision and text in panel 9
+**Recommended model:** GPT Image 2.5 (`quality: high`) — grid precision and text in panel 9
 
 ---
 
@@ -91,7 +91,7 @@ Constraints: no ingredients overlapping the product label, no motion blur (every
 
 **Key levers:** `{product_name}`, `{background_gradient}` (#F5F0EB to #FFFFFF for light, #1A0A2E to #0D0D0D for dark), `{liquid_type}` (amber juice, white milk, green smoothie), `{ingredient_list}` (sliced strawberries + mint leaves + ice cubes, cocoa nibs + hazelnuts + vanilla pod), `{texture_details}` (visible seeds on strawberry cross-section, frost crystals on ice), `{tilt_angle}` (15, 25), `{max_ingredients}` (6-8)
 
-**Recommended model:** GPT Image 2 (`quality: high`) — frozen detail precision and label legibility
+**Recommended model:** GPT Image 2.5 (`quality: high`) — frozen detail precision and label legibility
 
 ---
 

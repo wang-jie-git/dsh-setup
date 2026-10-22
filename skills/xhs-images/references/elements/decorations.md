@@ -143,3 +143,10 @@ Pre-composed decorative elements.
 - Chalk dust effects
 - Hand-drawn doodles
 - Mathematical formulas, simple icons
+
+### Screen-Print Style
+- Bold silhouettes, geometric shapes
+- Halftone dot patterns, print grain
+- No doodles — negative space does the work
+- Stencil-cut edges, color block boundaries
+- Vintage poster border treatments
