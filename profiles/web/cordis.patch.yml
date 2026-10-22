@@ -26,7 +26,9 @@
             '--embedder-base-url',
             'https://api.jina.ai/v1',
             '--embedder-model',
-            'jina-embeddings-v3'
+            'jina-embeddings-v3',
+            // embedder-api-key 已改为环境变量 JINA_API_KEY 注入（LaunchAgent com.one.dsh-web.plist）
+            // '--embedder-api-key' 参数省略，AI-memory MCP 从 process.env.JINA_API_KEY 读取
           ]
         toolCallTimeoutMs: 30000
 # Obsidian 读写 MCP（filesystem 直读 vault；方案 A 无 TLS 证书问题；2026-09-25 从 fresh profile 移植）
@@ -36,7 +38,7 @@
       config:
         serverName: obsidian
         transport: stdio
-        command: /usr/local/bin/mcp-server-filesystem
+        command: /Users/mac/.npm-global/bin/mcp-server-filesystem
         args: [ '/Users/mac/Documents/ObsidianVault' ]
         toolCallTimeoutMs: 30000
         failOnStartupError: false
@@ -97,11 +99,24 @@
           ]
         toolCallTimeoutMs: 600000
         failOnStartupError: false
+# context-mode 上下文优化 MCP（2026-10-22 接入；sandbox 工具输出 98% 缩减 + SQLite FTS5 会话记忆 + 路由执行）
+# 来源: https://github.com/mksglu/context-mode (31.7k stars)；独立 MCP server，bundle 直启，不依赖 Claude
+- insert:
+    - id: mcp-context-mode
+      name: '@deepseek-ai/dsh-mcp-client'
+      config:
+        serverName: context_mode
+        transport: stdio
+        command: /usr/local/bin/node
+        args: [ '/Users/mac/.context-mode/server.bundle.mjs' ]
+        toolCallTimeoutMs: 300000
+        failOnStartupError: false
 # REA 本地逆向 MCP（Mac 本机 npx rea-agents；Ghidra 12.1.4 + mac decompiler 自编译；2026-10-14 新增）
 # 与 mcp-ghidra-re（SSH 远程）并存，serverName 独立；工具: open_binary / list_strings / procedure_pseudo_code 等
 - insert:
     - id: mcp-rea-local
       name: '@deepseek-ai/dsh-mcp-client'
+      disabled: true
       config:
         serverName: rea
         transport: stdio
@@ -120,8 +135,8 @@
 - id: agent-default-model
   name: "@deepseek-ai/dsh-agent-default-model"
   config:
-    provider: shangtang
-    model: deepseek-v4-flash
+    provider: workbuddy
+    model: step-5-preview
 - id: ui-settings-general
   name: "@deepseek-ai/dsh-client-ui-settings-general"
   config:
@@ -610,5 +625,25 @@
 - insert:
     - id: dsh-worktable
       name: dsh-worktable
+# dsh-workbuddy-connect 插件（国内版 workbuddy + 国际版 workbuddy-ai，2026-10-21 修复注册缺失）
+- insert:
+    - id: llm-workbuddy
+      name: dsh-workbuddy-connect
 - id: diagnosis-wizard
   disabled: true
+
+# DSH 插件市场索引源（2026-10-20 配置；Open Plugin Market 社区索引，format 1）
+- id: plugin-market
+  name: "@deepseek-ai/dsh-plugin-market"
+  config:
+    indexes:
+      - https://dshopen.org/index.json
+
+# [2026-10-22] 上下文优化：workbuddy step-5-preview contextWindow=1M 从不压缩，
+# 新会话第一轮烧 88.9K tok（342 工具 77K + 历史）。thresholdRatio 0.2 → 阈值 21万，
+# 会话超过 21万 自动压缩，防止无限膨胀触发上游 400「模型无法处理此请求」。
+- id: compaction-basic
+  name: '@deepseek-ai/dsh-compaction-basic'
+  disabled: false
+  config:
+    thresholdRatio: 0.4
