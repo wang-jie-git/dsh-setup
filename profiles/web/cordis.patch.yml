@@ -17,19 +17,17 @@
         transport: stdio
         command: node
         args:
-          [
-            '/Users/mac/Desktop/AI-memory/dist/ai-memory-mcp.mjs',
-            '--codegraph-dir',
-            '/Users/mac/.local/share/ai-memory',
-            '--embedder',
-            'api',
-            '--embedder-base-url',
-            'https://api.jina.ai/v1',
-            '--embedder-model',
-            'jina-embeddings-v3',
-            // embedder-api-key 已改为环境变量 JINA_API_KEY 注入（LaunchAgent com.one.dsh-web.plist）
-            // '--embedder-api-key' 参数省略，AI-memory MCP 从 process.env.JINA_API_KEY 读取
-          ]
+          - '/Users/mac/Desktop/AI-memory/dist/ai-memory-mcp.mjs'
+          - '--codegraph-dir'
+          - '/Users/mac/.local/share/ai-memory'
+          - '--embedder'
+          - 'api'
+          - '--embedder-base-url'
+          - 'https://api.jina.ai/v1'
+          - '--embedder-model'
+          - 'jina-embeddings-v3'
+          # embedder-api-key 已改为环境变量 JINA_API_KEY 注入（LaunchAgent com.one.dsh-web.plist）
+          # '--embedder-api-key' 参数省略，AI-memory MCP 从 process.env.JINA_API_KEY 读取
         toolCallTimeoutMs: 30000
 # Obsidian 读写 MCP（filesystem 直读 vault；方案 A 无 TLS 证书问题；2026-09-25 从 fresh profile 移植）
 - insert:
